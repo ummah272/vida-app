@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengajuan Kontainer EMKL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 16px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 680px;
+        }
+
+        .container h2 {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #1a1a2e;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 28px;
+        }
+
+        .section-divider {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin: 20px 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        label span.req {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 7px;
+            border: 1.5px solid #d1d5db;
+            font-size: 14px;
+            font-family: inherit;
+            color: #111827;
+            background: #fafafa;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40,167,69,0.12);
+            background: #fff;
+        }
+
+        input[type="text"].error,
+        input[type="date"].error,
+        textarea.error,
+        select.error {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        input[type="text"].error:focus,
+        input[type="date"].error:focus,
+        textarea.error:focus,
+        select.error:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+            background: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* ── File Upload Styling ── */
+        .file-upload-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            border: 2px dashed #d1d5db;
+            border-radius: 7px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .file-upload-label:hover {
+            border-color: #28a745;
+            background: #f0fdf4;
+        }
+
+        .file-upload-label.dragover {
+            border-color: #28a745;
+            background: #f0fdf4;
+            box-shadow: 0 0 0 3px rgba(40,167,69,0.12);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-input-icon {
+            font-size: 24px;
+        }
+
+        .file-upload-text {
+            display: block;
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .file-upload-hint {
+            display: block;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+
+        /* ── File Preview (New Upload) ── */
+        .file-preview-container {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .file-preview-item {
+            position: relative;
+            border-radius: 7px;
+            overflow: hidden;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+        }
+
+        .file-preview-img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .file-preview-name {
+            padding: 6px;
+            font-size: 11px;
+            color: #6b7280;
+            word-break: break-word;
+            max-height: 40px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .file-remove-btn:hover {
+            background: #dc2626;
+        }
+
+        /* ── Gallery Foto Existing ── */
+        .gallery-section {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 7px;
+            padding: 14px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        .gallery-header {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 8px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-empty {
+            padding: 20px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        /* ── Modal untuk preview foto ── */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+        }
+
+        .modal-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background: white;
+            color: #111827;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #e5e7eb;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 13px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button[type="submit"]:hover { background-color: #218838; }
+        button[type="submit"]:active { transform: scale(0.99); }
+
+        .info-note {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #15803d;
+            margin-top: 18px;
+            line-height: 1.5;
+        }
+
+        .info-note strong { display: block; margin-bottom: 2px; }
+
+        .remark-note {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #78350f;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        /* Flash messages */
+        .flash { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+        .flash.success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .flash.error   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        /* Error message ── */
+        .error-message {
+            display: none;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .error-message ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .error-message li {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Pengajuan Kontainer EMKL</h2>
+    <p class="subtitle">Isi form di bawah — surat permohonan akan digenerate otomatis oleh sistem</p>
+
+    <!-- Flash messages (Jinja2) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Error validation messages -->
+    <div class="error-message" id="errorMessage"></div>
+
+    <form method="POST" action="/permohonan" enctype="multipart/form-data" id="formPermohonan">
+
+        <!-- BAGIAN 1: Identitas Perusahaan -->
+        <div class="section-divider">Identitas Perusahaan</div>
+
+        <div class="form-group">
+            <label for="nama_perusahaan">Nama Perusahaan <span class="req">*</span></label>
+            <input type="text" name="nama_perusahaan" id="nama_perusahaan"
+                   placeholder="PT. / CV. ..." required>
+        </div>
+
+
+
+        <!-- BAGIAN 2: Data Pengiriman -->
+        <div class="section-divider">Data Pengiriman</div>
+
+        <div class="row-2">
+            <div class="form-group">
+                <label for="no_job_order">No Job Order <span class="req">*</span></label>
+                <input type="text" name="no_job_order" id="no_job_order"
+                       placeholder="Contoh: JO-2025-001" required>
+            </div>
+            <div class="form-group">
+                <label for="nomor_kontainer">No Container <span class="req">*</span></label>
+                <input type="text" name="nomor_kontainer" id="nomor_kontainer"
+                       placeholder="Contoh: ABCU1234567" required>
+            </div>
+        </div>
+
+        <div class="row-2">
+            <div class="form-group">
+                <label for="no_booking">No Booking <span class="req">*</span></label>
+                <input type="text" name="no_booking" id="no_booking"
+                       placeholder="Contoh: BK-2025-XXX" required>
+            </div>
+            <div class="form-group">
+                <label for="tanggal_pengajuan">Tanggal Pengajuan <span class="req">*</span></label>
+                <input type="date" name="tanggal_pengajuan" id="tanggal_pengajuan" required>
+            </div>
+        </div>
+
+        <!-- BAGIAN 3: Detail Kontainer & Kendaraan -->
+        <div class="section-divider">Detail Kontainer & Kendaraan</div>
+
+        <div class="row-2">
+            <div class="form-group">
+                <label for="nopol_truck">Nopol Truck <span class="req">*</span></label>
+                <input type="text" name="nopol_truck" id="nopol_truck"
+                       placeholder="Contoh: W 1234 AB" required>
+            </div>
+            <div class="form-group">
+                <label for="jenis_permohonan">Jenis Permohonan <span class="req">*</span></label>
+                <select name="jenis_permohonan" id="jenis_permohonan" required>
+                    <option value="" disabled selected>-- Pilih jenis --</option>
+                    <option value="pemasukan">Pemasukan Barang</option>
+                    <option value="pengeluaran">Pengeluaran Barang</option>
+                    <option value="relokasi">Relokasi Kontainer</option>
+                    <option value="lainnya">Lainnya</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- BAGIAN 4: Kendala & Keterangan -->
+        <div class="section-divider">Kendala & Keterangan</div>
+
+        <div class="form-group">
+            <label for="kendala">Kendala <span class="req">*</span></label>
+            <textarea name="kendala" id="kendala"
+                      placeholder="Jelaskan kendala atau masalah yang dihadapi..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="remark">Remark & Catatan Khusus <span class="req">*</span></label>
+            <textarea name="remark" id="remark"
+                      placeholder="Catatan khusus mengapa kontainer ada di EA, kondisi, dll..." 
+                      style="min-height:80px;" required></textarea>
+        </div>
+
+        <!-- BAGIAN 5: Dokumentasi Foto Kontainer -->
+        <div class="section-divider">Dokumentasi Foto Kontainer di EA</div>
+
+        <!-- Gallery Foto yang sudah ada -->
+<!--        <div class="gallery-section">
+            <div class="gallery-header">📷 Foto Dokumentasi yang Sudah Ada</div>
+            <div id="existingGallery" class="gallery-grid">
+                <div class="gallery-empty">Belum ada foto dokumentasi</div>
+            </div>
+        </div>> -->
+
+        <!-- Upload Form -->
+        <div class="form-group">
+            <label>Upload Foto Kontainer Baru</label>
+            <p style="font-size: 12px; color: #6b7280; margin-bottom: 10px;">
+                📸 Upload foto kondisi kontainer di EA (depan, belakang, samping). 
+                <strong>Max 5 file, format JPG/PNG (max 5MB per file)</strong>
+            </p>
+            
+            <div class="file-upload-wrapper">
+                <label for="foto_kontainer" class="file-upload-label" id="dropzone">
+                    <span class="file-input-icon">📷</span>
+                    <span>
+                        <span class="file-upload-text">Klik untuk upload atau drag & drop foto</span>
+                        <span class="file-upload-hint">JPG, PNG (max 5MB per file)</span>
+                    </span>
+                </label>
+                <input type="file" name="foto_kontainer" id="foto_kontainer" 
+                       accept="image/jpeg,image/png" multiple>
+            </div>
+
+            <div class="file-preview-container" id="filePreview"></div>
+        </div>
+
+        <div class="remark-note">
+            <strong>📸 Panduan Foto:</strong>
+            Sertakan foto kondisi kontainer: No Container & Nopol terlihat jelas, 
+            sisi depan, belakang, dan samping. Pastikan pencahayaan cukup agar detail terlihat.
+        </div>
+
+        <div class="form-group">
+            <label for="keterangan_tambahan">Keterangan Tambahan</label>
+            <textarea name="keterangan_tambahan" id="keterangan_tambahan"
+                      placeholder="(Opsional) Informasi lain yang perlu disampaikan..."
+                      style="min-height:60px;"></textarea>
+        </div>
+
+        <button type="submit">📄 Kirim & Generate Surat Permohonan</button>
+    </form>
+
+    <div class="info-note">
+        <strong>ℹ️ Informasi</strong>
+        Setelah form dikirim, sistem akan otomatis membuat surat permohonan dalam format dokumen.
+        Foto yang diupload akan tersimpan sebagai dokumentasi. Status pengajuan dapat dipantau di halaman <strong>Monitoring</strong>.
+    </div>
+</div>
+
+<!-- Modal untuk preview foto full size -->
+<div class="modal" id="photoModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <img id="modalImg" class="modal-img" src="" alt="Preview">
+    </div>
+</div>
+
+<script>
+    // ── Load existing photos from server ──
+    //async function loadExistingPhotos() {
+     //   try {
+     //       const response = await fetch('/api/dokumentasi-foto');
+     //       const data = await response.json();
+      //      const gallery = document.getElementById('existingGallery');
+            
+       //     if (data.photos && data.photos.length > 0) {
+       //         gallery.innerHTML = '';
+       //         data.photos.forEach(photo => {
+       //             const item = document.createElement('div');
+       //             item.className = 'gallery-item';
+       //             item.innerHTML = `<img src="/static/dokumentasi_foto/${photo}" alt="${photo}">`;
+       //             item.onclick = () => openModal(`/static/dokumentasi_foto/${photo}`);
+       //             gallery.appendChild(item);
+       //         });
+       //     }
+       // } catch (error) {
+       //     console.error('Error loading photos:', error);
+      //  }
+  //  }
+
+    // ── Modal functions ──
+    function openModal(imageSrc) {
+        document.getElementById('modalImg').src = imageSrc;
+        document.getElementById('photoModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('photoModal').classList.remove('active');
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('photoModal');
+        if (event.target === modal) {
+            modal.classList.remove('active');
+        }
+    }
+
+    // ── Validasi form sebelum submit ──
+    document.getElementById('formPermohonan').addEventListener('submit', function(e) {
+        const requiredFields = [
+            'nama_perusahaan',
+            'no_job_order',
+            'nomor_kontainer',
+            'no_booking',
+            'tanggal_pengajuan',
+            'nopol_truck',
+            'jenis_permohonan',
+            'kendala',
+            'remark'
+        ];
+
+        let emptyFields = [];
+        
+        requiredFields.forEach(fieldName => {
+            const field = document.getElementById(fieldName);
+            const value = field ? field.value.trim() : '';
+            
+            if (!value) {
+                emptyFields.push(fieldName);
+                if (field) {
+                    field.classList.add('error');
+                }
+            } else {
+                if (field) {
+                    field.classList.remove('error');
+                }
+            }
+        });
+
+        if (emptyFields.length > 0) {
+            e.preventDefault();
+            
+            const fieldLabels = {
+                'nama_perusahaan': 'Nama Perusahaan',
+                'no_job_order': 'No Job Order',
+                'nomor_kontainer': 'No Container',
+                'no_booking': 'No Booking',
+                'tanggal_pengajuan': 'Tanggal Pengajuan',
+                'nopol_truck': 'Nopol Truck',
+                'jenis_permohonan': 'Jenis Permohonan',
+                'kendala': 'Kendala',
+                'remark': 'Remark & Catatan Khusus'
+            };
+
+            const errorList = emptyFields.map(f => `<li>${fieldLabels[f] || f}</li>`).join('');
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.innerHTML = `
+                <strong>⚠️ Field yang belum diisi:</strong>
+                <ul>${errorList}</ul>
+            `;
+            errorMsg.classList.add('show');
+            
+            // Scroll ke atas untuk lihat error
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Scroll ke field pertama yang kosong
+            const firstEmptyField = document.getElementById(emptyFields[0]);
+            if (firstEmptyField) {
+                setTimeout(() => {
+                    firstEmptyField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstEmptyField.focus();
+                }, 500);
+            }
+        }
+    });
+
+    // ── File upload dan preview (new files) ──
+    const fileInput = document.getElementById('foto_kontainer');
+    const filePreview = document.getElementById('filePreview');
+    const dropzone = document.getElementById('dropzone');
+    const maxFiles = 5;
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+    let selectedFiles = new DataTransfer();
+
+    // Click to upload
+    document.querySelector('label[for="foto_kontainer"]').addEventListener('click', (e) => {
+        if (e.target.closest('.file-remove-btn')) {
+            e.preventDefault();
+        }
+    });
+
+    // Drag and drop
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+        const totalFiles = selectedFiles.items.length + files.length;
+        
+        if (totalFiles > maxFiles) {
+            alert(`Maksimal ${maxFiles} file. Anda sudah memilih ${selectedFiles.items.length} file.`);
+            return;
+        }
+
+        for (let file of files) {
+            if (file.size > maxFileSize) {
+                alert(`File "${file.name}" terlalu besar (max 5MB).`);
+                continue;
+            }
+            selectedFiles.items.add(file);
+        }
+
+        fileInput.files = selectedFiles.files;
+        displayPreviews();
+    }
+
+    function displayPreviews() {
+        filePreview.innerHTML = '';
+        
+        for (let i = 0; i < selectedFiles.items.length; i++) {
+            const file = selectedFiles.items[i].getAsFile();
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'file-preview-item';
+                previewItem.innerHTML = `
+                    <img src="${e.target.result}" class="file-preview-img" alt="${file.name}">
+                    <div class="file-preview-name">${file.name}</div>
+                    <button type="button" class="file-remove-btn" data-index="${i}">✕</button>
+                `;
+                
+                previewItem.querySelector('.file-remove-btn').addEventListener('click', (evt) => {
+                    evt.preventDefault();
+                    removeFile(i);
+                });
+
+                filePreview.appendChild(previewItem);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removeFile(index) {
+        const dt = new DataTransfer();
+        for (let i = 0; i < selectedFiles.items.length; i++) {
+            if (i !== index) {
+                dt.items.add(selectedFiles.items[i].getAsFile());
+            }
+        }
+        selectedFiles = dt;
+        fileInput.files = dt.files;
+        displayPreviews();
+    }
+
+    // Load existing photos when page loads
+    window.addEventListener('DOMContentLoaded', loadExistingPhotos);
+</script>
+</body>
+</html>

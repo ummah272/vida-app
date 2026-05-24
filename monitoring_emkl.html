@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoring Pengajuan Kontainer EMKL</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 12px; text-align: center; }
+        th { background-color: #003366; color: white; }
+        .status { padding: 5px; border-radius: 5px; }
+        .status-menunggu  { background-color: #ffcc00; color: black; }
+        .status-disetujui { background-color: #28a745; color: white; }
+        .status-ditolak   { background-color: #dc3545; color: white; }
+
+        .btn-download {
+            background-color: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .btn-download:hover { background-color: #218838; }
+        .tidak-bisa { color: #999; font-size: 13px; }
+    </style>
+</head>
+<body>
+        <a href="{{ url_for('dashboard_emkl') }}" style="
+        display: inline-block;
+        margin-bottom: 16px;
+        padding: 8px 16px;
+        background-color: #003366;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+    ">← Kembali</a>
+    <h2>Monitoring Pengajuan Kontainer EMKL</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama Perusahaan</th>
+                <th>Nomor Kontainer</th>
+                <th>Nopol Truck</th>
+                <th>Jenis Permohonan</th>
+                <th>Waktu Pengajuan</th>
+                <th>Status</th>
+                <th>Surat Permohonan</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in pengajuan_kontainer %}
+            <tr>
+                <td>{{ item.nama_perusahaan }}</td>
+                <td>{{ item.nomor_kontainer }}</td>
+                <td>{{ item.nopol_truck }}</td>
+                <td>{{ item.jenis_permohonan | title }}</td>
+                <td>{{ item.waktu_pengajuan }}</td>
+                <td>
+                    <span class="status status-{{ item.status | lower }}">
+                        {{ item.status }}
+                    </span>
+                </td>
+                <td>
+                    {% if item.status == 'Disetujui' and item.file_surat %}
+                        <a class="btn-download" href="{{ url_for('download_surat', filename=item.file_surat) }}">
+                            ⬇ Download Surat
+                        </a>
+                    {% else %}
+                        <span class="tidak-bisa">Belum tersedia</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

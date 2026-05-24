@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard CS - Monitoring Pengeluaran Kontainer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            background: #f0f4f8;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .sidebar img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #0056b3;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+        .sidebar a:hover {
+            background-color: #002147;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .dashboard-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 40px;
+            color: #1a1a2e;
+        }
+        .dashboard-title h1 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            color: white;
+            padding: 24px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stat-card.total {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card.menunggu {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card.disetujui {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .table-container h2 {
+            color: #1a1a2e;
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #003366;
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .btn-lihat {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #003366;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-lihat:hover {
+            background-color: #002244;
+        }
+
+        .empty-msg {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .view-all {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #003366;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 16px;
+            transition: background 0.2s;
+        }
+
+        .view-all:hover {
+            background-color: #002244;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Pelindo_II_logo.svg/200px-Pelindo_II_logo.svg.png" alt="Pelindo TPS Logo">
+        <h2>Login Request System</h2>
+        <a href="/dashboard_cs">📊 Dashboard</a>
+        <a href="/monitoring_cs">📋 Monitoring</a>
+        <a href="/profile_cs">👤 Profile</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="dashboard-title">
+                <h1>Selamat datang, {{ session['username'] }}!</h1>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-number">{{ total_pengajuan }}</div>
+                    <div class="stat-label">Total Pengajuan</div>
+                </div>
+                <div class="stat-card menunggu">
+                    <div class="stat-number">{{ menunggu_pengajuan }}</div>
+                    <div class="stat-label">Menunggu Approval</div>
+                </div>
+                <div class="stat-card disetujui">
+                    <div class="stat-number">{{ disetujui_pengajuan }}</div>
+                    <div class="stat-label">Sudah Disetujui</div>
+                </div>
+            </div>
+
+            <!-- Table: 3 Permohonan Teratas Yang Disetujui -->
+            {% if approved_pengajuan %}
+            <div class="table-container">
+                <h2>📄 Permohonan Terbaru Yang Disetujui</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No Job Order</th>
+                            <th>No Container</th>
+                            <th>Perusahaan</th>
+                            <th>Jenis Permohonan</th>
+                            <th>Tanggal</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in approved_pengajuan %}
+                        <tr>
+                            <td><strong>{{ item.no_job_order }}</strong></td>
+                            <td><strong>{{ item.nomor_kontainer }}</strong></td>
+                            <td>{{ item.nama_perusahaan }}</td>
+                            <td>{{ item.jenis_permohonan|replace('_', ' ')|title }}</td>
+                            <td>{{ item.tanggal_pengajuan }}</td>
+                            <td style="text-align: center;">
+                                {% if item.file_surat %}
+                                    <a href="{{ url_for('lihat_surat', filename=item.file_surat) }}" target="_blank" class="btn-lihat">
+                                        📄 Lihat
+                                    </a>
+                                {% else %}
+                                    <span class="empty-msg">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="text-right">
+                    <a href="{{ url_for('monitoring_cs') }}" class="view-all">Lihat Semua Pengajuan →</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="table-container" style="text-align: center; padding: 40px;">
+                <p style="color: #999; font-size: 14px;">📭 Belum ada pengajuan yang disetujui</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
