@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard EMKL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #003366; /* Biru Navy */
+            color: white;
+            padding: 20px;
+            height: 100vh;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .sidebar img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #0056b3;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .sidebar a:hover {
+            background-color: #002147; /* Biru Navy Gelap */
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-title {
+            text-align: center;
+            font-size: 28px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Pelindo_II_logo.svg/200px-Pelindo_II_logo.svg.png" alt="Pelindo TPS Logo">
+        <h2>Login Request System</h2>
+        <a href="/dashboard_emkl">Dashboard</a>
+        <a href="/profile_emkl">Profile</a>
+        <a href="/permohonan">Permohonan</a> <!-- Link ke Halaman Permohonan -->
+        <a href="/monitoring_emkl">Monitoring</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="dashboard-title">
+                <h1>Selamat datang, {{ session['username'] }}!</h1>
+                <p>Silakan pilih menu di sebelah kiri untuk melanjutkan.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

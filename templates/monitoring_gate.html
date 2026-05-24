@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Pengajuan Kontainer Gate Superintendent</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            padding: 20px;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            color: #1a1a2e;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        a.back-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #003366;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        a.back-btn:hover {
+            background-color: #002244;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background-color: #003366;
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px 14px;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-menunggu {
+            background-color: #fef3c7;
+            color: #78350f;
+        }
+
+        .status-disetujui {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-ditolak {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0;
+            min-width: 500px;
+        }
+
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .step-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .step-icon.done {
+            background-color: #28a745;
+        }
+
+        .step-icon.pending {
+            background-color: #d1d5db;
+            color: #6b7280;
+        }
+
+        .step-icon.rejected {
+            background-color: #ef4444;
+        }
+
+        .step-label {
+            font-size: 10px;
+            color: #6b7280;
+            text-align: center;
+            line-height: 1.3;
+            width: 70px;
+        }
+
+        .timeline-connector {
+            width: 35px;
+            height: 2px;
+            background-color: #d1d5db;
+            margin: 0 -2px;
+            flex-shrink: 0;
+        }
+
+        .timeline-connector.done {
+            background-color: #28a745;
+        }
+
+        .surat-link {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #003366;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .surat-link:hover {
+            background-color: #002244;
+        }
+
+        .surat-unavailable {
+            color: #999;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>📋 Monitoring Pengajuan Kontainer</h2>
+        <a href="{{ url_for('dashboard_gate') }}" class="back-btn">← Kembali</a>
+    </div>
+
+    {% if pengajuan_kontainer %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama Perusahaan</th>
+                    <th>No Container</th>
+                    <th>Nopol Truck</th>
+                    <th>Jenis Permohonan</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pengajuan_kontainer %}
+                <tr>
+                    <td><strong>{{ item.nama_perusahaan }}</strong></td>
+                    <td><strong>{{ item.nomor_kontainer }}</strong></td>
+                    <td>{{ item.nopol_truck }}</td>
+                    <td>{{ item.jenis_permohonan|replace('_', ' ')|title }}</td>
+                    <td>{{ item.tanggal_pengajuan }}</td>
+                    <td>
+                        <span class="status status-{{ item.status|lower|replace(' ', '') }}">
+                            {{ item.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="timeline">
+                            <!-- Step 1: Gate Buat Pengajuan -->
+                            <div class="timeline-step">
+                                <div class="step-icon done">✔</div>
+                                <div class="step-label">Gate<br>Pengajuan</div>
+                            </div>
+
+                            <!-- Connector 1 to 2 -->
+                            <div class="timeline-connector done"></div>
+
+                            <!-- Step 2: BC Approve/Reject -->
+                            <div class="timeline-step">
+                                <div class="step-icon {% if item.status == 'Disetujui' %}done{% elif item.status == 'Ditolak' %}rejected{% else %}pending{% endif %}">
+                                    {% if item.status == 'Disetujui' %}✔{% elif item.status == 'Ditolak' %}✘{% else %}–{% endif %}
+                                </div>
+                                <div class="step-label">BC<br>Approval</div>
+                            </div>
+
+                            <!-- Connector 2 to 3 -->
+                            <div class="timeline-connector {% if item.status == 'Disetujui' and item.file_surat %}done{% endif %}"></div>
+
+                            <!-- Step 3: Surat Ready -->
+                            <div class="timeline-step">
+                                <div class="step-icon {% if item.status == 'Disetujui' and item.file_surat %}done{% else %}pending{% endif %}">
+                                    {% if item.status == 'Disetujui' and item.file_surat %}✔{% else %}–{% endif %}
+                                </div>
+                                <div class="step-label">Surat<br>Ready</div>
+                            </div>
+
+                            <!-- Connector 3 to 4 -->
+                            <div class="timeline-connector {% if item.status == 'Disetujui' and item.file_surat %}done{% endif %}"></div>
+
+                            <!-- Step 4: CS Monitor (Akhir) -->
+                            <div class="timeline-step">
+                                <div class="step-icon {% if item.status == 'Disetujui' and item.file_surat %}done{% else %}pending{% endif %}">
+                                    {% if item.status == 'Disetujui' and item.file_surat %}✔{% else %}–{% endif %}
+                                </div>
+                                <div class="step-label">CS<br>Monitor</div>
+                            </div>
+
+                            <!-- Surat Link -->
+                            {% if item.status == 'Disetujui' and item.file_surat %}
+                                <div style="margin-left: 12px;">
+                                    <a href="{{ url_for('lihat_surat', filename=item.file_surat) }}" target="_blank" class="surat-link">
+                                        📄 Lihat
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div style="margin-left: 12px;">
+                                    <span class="surat-unavailable">—</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <p>Belum ada pengajuan kontainer</p>
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

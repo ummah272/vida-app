@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Pembuatan Kode - EMKL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #002147 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .navbar-nav a {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav a:hover {
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 15px;
+            background: #f0f0f0;
+            border-radius: 20px;
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 700px;
+            padding: 40px;
+            margin-top: 80px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #f8f9ff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 18px;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-generate {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-generate:hover {
+            background: #5568d3;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-reset {
+            background: #ecf0f1;
+            color: #666;
+        }
+
+        .btn-reset:hover {
+            background: #d5dbdb;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .code-result {
+            background: #f8f9ff;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .code-result.show {
+            display: block;
+        }
+
+        .code-result h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .code-display {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+
+        .code-info {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .btn-copy {
+            background: #27ae60;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .btn-copy:hover {
+            background: #229954;
+        }
+
+        .btn-copy:active {
+            background: #1e8449;
+        }
+
+        .info-box {
+            background: #ecf0f1;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .info-box strong {
+            color: #333;
+        }
+
+        .history-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+
+        .history-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .history-table thead {
+            background: #f8f9ff;
+        }
+
+        .history-table th {
+            padding: 12px;
+            text-align: left;
+            color: #667eea;
+            font-weight: 600;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            color: #666;
+        }
+
+        .history-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .spinner {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">📦  PELINDO Terminal Petikemas Surabaya</div>
+        <div class="navbar-nav">
+            <a href="/dashboard_ea">Kembali</a>
+            <a href="#pembuatan_kode" style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 5px;">Create Code</a>
+            <a href="#riwayat">Histori</a>
+            <div class="profile_ea">
+                <div class="user-icon">EA</div>
+                <span id="username-display">{{ session.get('username', 'User') }}</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Halaman Pembuatan Kode</h1>
+            <p>Buat kode akses unik untuk dokumen EMKL Anda</p>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="/dashboard_ea">Dashboard</a>
+            <span>></span>
+            <span>Pembuatan Kode</span>
+        </div>
+
+        <!-- Alert Messages -->
+        {% if error %}
+            <div class="alert alert-error">
+                <strong>Error!</strong> {{ error }}
+            </div>
+        {% endif %}
+
+        {% if success %}
+            <div class="alert alert-success">
+                <strong>Sukses!</strong> {{ success }}
+            </div>
+        {% endif %}
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <strong>ℹ️ Informasi:</strong> Kode akses yang dibuat akan unik dan hanya dapat digunakan untuk satu permohonan. Setiap kode memiliki validitas sesuai dengan jenis dokumen yang dipilih.
+        </div>
+
+        <!-- Form -->
+        <form id="kodeForm" method="POST">
+            <!-- Form Row 1 -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_dokumen">
+                        ID Dokumen <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           id="id_dokumen" 
+                           name="id_dokumen" 
+                           placeholder="Contoh: DOC-2024-001" 
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="jenis_dokumen">
+                        Jenis Dokumen <span class="required">*</span>
+                    </label>
+                    <select id="jenis_dokumen" name="jenis_dokumen" required>
+                        <option value="">-- Pilih Jenis Dokumen --</option>
+                        <option value="pib">PIB (Pemberitahuan Impor Barang)</option>
+                        <option value="peb">PEB (Pemberitahuan Ekspor Barang)</option>
+                        <option value="bc11">BC 1.1 (Manifest Barang Import)</option>
+                        <option value="bc27">BC 2.7 (Manifest Barang Ekspor)</option>
+                        <option value="bc41">BC 4.1 (Nota Pelunasan Bea)</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Form Row 2 -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tgl_dokumen">
+                        Tanggal Dokumen <span class="required">*</span>
+                    </label>
+                    <input type="date" 
+                           id="tgl_dokumen" 
+                           name="tgl_dokumen" 
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="nomor_referensi">
+                        Nomor Referensi <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           id="nomor_referensi" 
+                           name="nomor_referensi" 
+                           placeholder="Contoh: REF-2024-00123" 
+                           required>
+                </div>
+            </div>
+
+            <!-- Form Row 3 -->
+            <div class="form-group">
+                <label for="deskripsi">Deskripsi (Opsional)</label>
+                <textarea id="deskripsi" 
+                          name="deskripsi" 
+                          placeholder="Tambahkan catatan atau deskripsi dokumen..."></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="btn-group">
+                <button type="submit" class="btn-generate">
+                    <span class="spinner" id="spinner"></span>Generate Kode
+                </button>
+                <button type="reset" class="btn-reset">Reset Form</button>
+            </div>
+        </form>
+
+        <!-- Code Result -->
+        {% if kode_akses %}
+            <div class="code-result show" id="codeResult">
+                <h3>Kode Akses Berhasil Dibuat</h3>
+                <div class="code-info">
+                    Simpan kode ini untuk keperluan verifikasi
+                </div>
+                <div class="code-display" id="codeDisplay">{{ kode_akses }}</div>
+                <button type="button" class="btn-copy" onclick="copyToClipboard()">Salin Kode</button>
+            </div>
+        {% endif %}
+
+        <!-- History Section -->
+        <div class="history-section">
+            <h3>📋 Riwayat Pembuatan Kode Terbaru</h3>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>ID Dokumen</th>
+                        <th>Jenis Dokumen</th>
+                        <th>Tanggal</th>
+                        <th>Kode Akses</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DOC-2024-001</td>
+                        <td>PEB</td>
+                        <td>2024-01-15</td>
+                        <td>AB12CD34</td>
+                        <td><span class="badge badge-success">Aktif</span></td>
+                    </tr>
+                    <tr>
+                        <td>DOC-2024-002</td>
+                        <td>PIB</td>
+                        <td>2024-01-14</td>
+                        <td>EF56GH78</td>
+                        <td><span class="badge badge-success">Aktif</span></td>
+                    </tr>
+                    <tr>
+                        <td>DOC-2024-003</td>
+                        <td>BC 1.1</td>
+                        <td>2024-01-13</td>
+                        <td>IJ90KL12</td>
+                        <td><span class="badge badge-pending">Pending</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2024 PELINDO Terminal Petikemas Surabaya. Semua hak dilindungi. | Privacy Policy | Syarat & Ketentuan</p>
+        </div>
+    </div>
+
+    <script>
+        // Set tanggal hari ini sebagai default
+        document.getElementById('tgl_dokumen').valueAsDate = new Date();
+
+        // Form submission
+        document.getElementById('kodeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const spinner = document.getElementById('spinner');
+            spinner.style.display = 'inline-block';
+            
+            // Simulating form submission
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                alert('Kode berhasil dibuat!');
+                // Dalam praktik, form akan di-submit ke server
+                // this.submit();
+            }, 1500);
+        });
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const codeDisplay = document.getElementById('codeDisplay');
+            const text = codeDisplay.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Tersalin!';
+                btn.style.background = '#27ae60';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        // Form validation
+        document.getElementById('kodeForm').addEventListener('submit', function(e) {
+            const idDokumen = document.getElementById('id_dokumen').value.trim();
+            const jenisDokumen = document.getElementById('jenis_dokumen').value;
+            const nomorReferensi = document.getElementById('nomor_referensi').value.trim();
+            
+            if (!idDokumen || !jenisDokumen || !nomorReferensi) {
+                alert('Semua field yang bertanda (*) harus diisi!');
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

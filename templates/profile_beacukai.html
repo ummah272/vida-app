@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Bea Cukai</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f4f8; }
+        .container { margin: 20px; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; font-size: 24px; }
+        .profile-info { margin-top: 20px; }
+        .profile-info p { font-size: 18px; }
+        .btn { display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .btn:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+    <div class="header">
+        <h2>📋 Monitoring Pengajuan Kontainer</h2>
+        <a href="{{ url_for('monitoring_beacukai') }}" class="back-btn">← Kembali</a>
+    </div>
+
+    <div class="container">
+        <h2>Profile Bea Cukai</h2>
+        <div class="profile-info">
+            <p><strong>Username: </strong>{{ session['username'] }}</p>
+            <p><strong>Email: </strong>beacukai@example.com</p>
+            <p><strong>Role: </strong>Bea Cukai</p>
+            <!-- You can add more profile fields here -->
+        </div>
+        <a href="/logout" class="btn">Logout</a>
+    </div>
+
+</body>
+</html>

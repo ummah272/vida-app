@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Permohonan - Bea Cukai</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        html, body {
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            display: flex;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #003366 0%, #004d99 100%);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            flex-shrink: 0;
+            height: 100%;
+            overflow-y: auto;
+            box-shadow: 4px 0 16px rgba(0,0,0,0.1);
+        }
+
+        .sidebar img {
+            width: 80px;
+            height: auto;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .sidebar h2 {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .sidebar a {
+            width: 100%;
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 14px 16px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .sidebar a.active {
+            background: #28a745;
+            color: white;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-wrapper {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .header-wrapper {
+            margin-bottom: 24px;
+        }
+
+        .header-content h1 {
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .flash { 
+            padding: 12px 16px; 
+            border-radius: 8px; 
+            margin-bottom: 16px; 
+            font-size: 13px; 
+        }
+        .flash.success { 
+            background: #d1fae5; 
+            color: #065f46; 
+            border: 1px solid #6ee7b7; 
+        }
+        .flash.error { 
+            background: #fee2e2; 
+            color: #991b1b; 
+            border: 1px solid #fca5a5; 
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1.5px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        th {
+            background: #003366;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-menunggu {
+            background: #fef3c7;
+            color: #78350f;
+        }
+
+        .status-disetujui {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-ditolak {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-approve {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+
+        .btn-view {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2563eb;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1a1a2e;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 13px;
+            font-family: inherit;
+            min-height: 80px;
+            outline: none;
+        }
+
+        .form-group textarea:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40,167,69,0.12);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .modal-actions button {
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-submit {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #218838;
+        }
+
+        .btn-cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-cancel:hover {
+            background: #d1d5db;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #1a1a2e;
+        }
+
+        .modal-close:hover {
+            color: #1a1a2e;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .detail-table td {
+            padding: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-table td:first-child {
+            font-weight: 600;
+            width: 40%;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 16px;
+                gap: 16px;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .sidebar img {
+                width: 50px;
+                margin: 0;
+            }
+
+            .sidebar h2 {
+                font-size: 14px;
+                margin: 0;
+                flex: 1;
+                min-width: 150px;
+            }
+
+            .sidebar a {
+                padding: 8px 12px;
+                font-size: 12px;
+                min-width: 100px;
+            }
+
+            .main-wrapper {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .header-content h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR di SISI KIRI -->
+    <div class="sidebar">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Pelindo_II_logo.svg/200px-Pelindo_II_logo.svg.png" alt="Pelindo TPS Logo">
+        <h2>Login Request System</h2>
+        <a href="/monitoring_beacukai" class="active">📋 Monitoring</a>
+        <a href="/profile_beacukai">📊 profile</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT di SISI KANAN -->
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header-wrapper">
+                <div class="header-content">
+                    <h1>📋 Monitoring Permohonan Kontainer</h1>
+                    <p class="subtitle">Bea Cukai - Verifikasi dan Persetujuan Permohonan</p>
+                </div>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterStatus('all')">Semua</button>
+                <button class="filter-btn" onclick="filterStatus('Menunggu')">⏳ Menunggu</button>
+                <button class="filter-btn" onclick="filterStatus('Disetujui')">✅ Disetujui</button>
+                <button class="filter-btn" onclick="filterStatus('Ditolak')">❌ Ditolak</button>
+            </div>
+
+            {% if pengajuan_kontainer %}
+            <div class="table-wrapper">
+                <table id="tabelPermohonan">
+                    <thead>
+                        <tr>
+                            <th>No Job Order</th>
+                            <th>No Container</th>
+                            <th>Perusahaan</th>
+                            <th>Jenis Permohonan</th>
+                            <th>Status</th>
+                            <th>Tanggal Pengajuan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for permohonan in pengajuan_kontainer %}
+                        <tr class="status-{{ permohonan.status|lower|replace(' ', '') }}">
+                            <td><strong>{{ permohonan.no_job_order }}</strong></td>
+                            <td><strong>{{ permohonan.nomor_kontainer }}</strong></td>
+                            <td>{{ permohonan.nama_perusahaan }}</td>
+                            <td>{{ permohonan.jenis_permohonan|replace('_', ' ')|title }}</td>
+                            <td>
+                                <span class="status-badge status-{{ permohonan.status|lower|replace(' ', '') }}">
+                                    {{ permohonan.status }}
+                                </span>
+                            </td>
+                            <td>{{ permohonan.tanggal_pengajuan }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-view" onclick="lihatDetail('{{ permohonan.id }}')">👁️ Lihat</button>
+                                    {% if permohonan.status == 'Menunggu' %}
+                                    <button class="btn-approve" onclick="openApproveModal('{{ permohonan.id }}')">✅ Approve</button>
+                                    <button class="btn-reject" onclick="openRejectModal('{{ permohonan.id }}')">❌ Reject</button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p>Tidak ada permohonan yang menunggu verifikasi</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal Detail Permohonan -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeDetailModal()">&times;</span>
+            <div id="detailContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal Approve -->
+    <div id="approveModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('approveModal')">&times;</span>
+            <div class="modal-header">Setujui Permohonan</div>
+            <form method="POST" id="approveForm">
+                <input type="hidden" name="action" value="approve">
+                <input type="hidden" name="permohonan_id" id="approvePermohonanId">
+                <div class="form-group">
+                    <label>Catatan (Opsional)</label>
+                    <textarea name="catatan" placeholder="Tambahkan catatan untuk permohonan ini..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal('approveModal')">Batal</button>
+                    <button type="submit" class="btn-submit">Setujui Permohonan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Reject -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('rejectModal')">&times;</span>
+            <div class="modal-header">Tolak Permohonan</div>
+            <form method="POST" id="rejectForm">
+                <input type="hidden" name="action" value="reject">
+                <input type="hidden" name="permohonan_id" id="rejectPermohonanId">
+                <div class="form-group">
+                    <label>Alasan Penolakan</label>
+                    <textarea name="catatan" placeholder="Jelaskan alasan penolakan..." required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal('rejectModal')">Batal</button>
+                    <button type="submit" class="btn-submit" style="background: #ef4444;">Tolak Permohonan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function filterStatus(status) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                if (status === 'all') {
+                    row.style.display = '';
+                } else {
+                    const rowStatus = row.querySelector('.status-badge').textContent.trim();
+                    row.style.display = rowStatus === status ? '' : 'none';
+                }
+            });
+        }
+
+        function openApproveModal(permohonanId) {
+            document.getElementById('approvePermohonanId').value = permohonanId;
+            document.getElementById('approveModal').classList.add('active');
+        }
+
+        function openRejectModal(permohonanId) {
+            document.getElementById('rejectPermohonanId').value = permohonanId;
+            document.getElementById('rejectModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        async function lihatDetail(permohonanId) {
+            try {
+                const url = '/api/permohonan/' + permohonanId;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                let html = '<div class="modal-header">Detail Permohonan</div>';
+                html += '<div class="modal-body">';
+                html += '<table class="detail-table">';
+                html += '<tr><td>Nama Perusahaan</td><td>' + data.nama_perusahaan + '</td></tr>';
+                html += '<tr><td>No Job Order</td><td>' + data.no_job_order + '</td></tr>';
+                html += '<tr><td>No Container</td><td><strong>' + data.nomor_kontainer + '</strong></td></tr>';
+                html += '<tr><td>No Booking</td><td>' + data.no_booking + '</td></tr>';
+                html += '<tr><td>Nopol Truck</td><td>' + data.nopol_truck + '</td></tr>';
+                html += '<tr><td>Jenis Permohonan</td><td>' + data.jenis_permohonan + '</td></tr>';
+                html += '<tr><td>Kendala</td><td>' + data.kendala + '</td></tr>';
+                html += '<tr><td>Remark</td><td>' + (data.remark || '-') + '</td></tr>';
+                html += '<tr><td>Tanggal Pengajuan</td><td>' + data.tanggal_pengajuan + '</td></tr>';
+                html += '<tr><td>Status</td><td><span class="status-badge status-' + data.status.toLowerCase() + '">' + data.status + '</span></td></tr>';
+                html += '</table>';
+                
+                if (data.file_surat) {
+                    html += '<br><a href="/lihat_surat/' + data.file_surat + '" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600;">📄 Lihat Surat Permohonan</a>';
+                }
+                
+                html += '</div>';
+                
+                document.getElementById('detailContent').innerHTML = html;
+                document.getElementById('detailModal').classList.add('active');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal mengambil detail permohonan');
+            }
+        }
+
+        window.onclick = function(event) {
+            const approveModal = document.getElementById('approveModal');
+            const rejectModal = document.getElementById('rejectModal');
+            const detailModal = document.getElementById('detailModal');
+            
+            if (event.target === approveModal) {
+                approveModal.classList.remove('active');
+            }
+            if (event.target === rejectModal) {
+                rejectModal.classList.remove('active');
+            }
+            if (event.target === detailModal) {
+                detailModal.classList.remove('active');
+            }
+        };
+    </script>
+</body>
+</html>

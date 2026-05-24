@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Pengajuan Kontainer CS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            padding: 20px;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            color: #1a1a2e;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        a.back-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #003366;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        a.back-btn:hover {
+            background-color: #002244;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1.5px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #003366;
+            color: white;
+            border-color: #003366;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background-color: #003366;
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px 14px;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-menunggu {
+            background-color: #fef3c7;
+            color: #78350f;
+        }
+
+        .status-disetujui {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-ditolak {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-lihat {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #003366;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-lihat:hover {
+            background-color: #002244;
+        }
+
+        .belum-ada {
+            color: #999;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card.menunggu {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card.disetujui {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-card.ditolak {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>📋 Monitoring Pengajuan Kontainer</h2>
+        <a href="{{ url_for('dashboard_cs') }}" class="back-btn">← Kembali</a>
+    </div>
+
+    <!-- Statistics -->
+    {% if pengajuan_kontainer %}
+    {% set total = pengajuan_kontainer|length %}
+    {% set menunggu = pengajuan_kontainer|selectattr('status', 'equalto', 'Menunggu')|list|length %}
+    {% set disetujui = pengajuan_kontainer|selectattr('status', 'equalto', 'Disetujui')|list|length %}
+    {% set ditolak = pengajuan_kontainer|selectattr('status', 'equalto', 'Ditolak')|list|length %}
+    
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-number">{{ total }}</div>
+            <div class="stat-label">Total Pengajuan</div>
+        </div>
+        <div class="stat-card menunggu">
+            <div class="stat-number">{{ menunggu }}</div>
+            <div class="stat-label">Menunggu</div>
+        </div>
+        <div class="stat-card disetujui">
+            <div class="stat-number">{{ disetujui }}</div>
+            <div class="stat-label">Disetujui</div>
+        </div>
+        <div class="stat-card ditolak">
+            <div class="stat-number">{{ ditolak }}</div>
+            <div class="stat-label">Ditolak</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filter -->
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterStatus('all')">Semua</button>
+        <button class="filter-btn" onclick="filterStatus('Menunggu')">⏳ Menunggu</button>
+        <button class="filter-btn" onclick="filterStatus('Disetujui')">✅ Disetujui</button>
+        <button class="filter-btn" onclick="filterStatus('Ditolak')">❌ Ditolak</button>
+    </div>
+
+    {% if pengajuan_kontainer %}
+    <div class="table-wrapper">
+        <table id="tabelPermohonan">
+            <thead>
+                <tr>
+                    <th>Nama Perusahaan</th>
+                    <th>No Container</th>
+                    <th>Nopol Truck</th>
+                    <th>Jenis Permohonan</th>
+                    <th>Kendala</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Status</th>
+                    <th>Surat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pengajuan_kontainer %}
+                <tr class="status-{{ item.status|lower|replace(' ', '') }}">
+                    <td><strong>{{ item.nama_perusahaan }}</strong></td>
+                    <td><strong>{{ item.nomor_kontainer }}</strong></td>
+                    <td>{{ item.nopol_truck }}</td>
+                    <td>{{ item.jenis_permohonan|replace('_', ' ')|title }}</td>
+                    <td style="text-align: left;">
+                        <span title="{{ item.kendala }}">
+                            {{ item.kendala[:50] }}{% if item.kendala|length > 50 %}...{% endif %}
+                        </span>
+                    </td>
+                    <td>{{ item.tanggal_pengajuan }}</td>
+                    <td>
+                        <span class="status status-{{ item.status|lower|replace(' ', '') }}">
+                            {{ item.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if item.status == 'Disetujui' and item.file_surat %}
+                            <a class="btn-lihat" href="{{ url_for('lihat_surat', filename=item.file_surat) }}" target="_blank">
+                                📄 Lihat
+                            </a>
+                        {% else %}
+                            <span class="belum-ada">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <p>Belum ada pengajuan kontainer</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+    function filterStatus(status) {
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Filter rows
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            if (status === 'all') {
+                row.style.display = '';
+            } else {
+                const rowStatus = row.querySelector('.status').textContent.trim();
+                row.style.display = rowStatus === status ? '' : 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
