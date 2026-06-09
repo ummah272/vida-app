@@ -1,1 +1,0 @@
-ALTER TABLE permohonan ADD COLUMN nomor_polisi VARCHAR(255);

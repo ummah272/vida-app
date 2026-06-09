@@ -3,28 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <title>Profile Gate Superintendent</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f0f4f8; }
-        .container { margin: 20px; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        h2 { text-align: center; font-size: 24px; }
-        .profile-info { margin-top: 20px; }
-        .profile-info p { font-size: 18px; }
-        .btn { display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
-        .btn:hover { background-color: #0056b3; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #f0f4f8; display: flex; margin: 0; }
+
+        /* SIDEBAR - sama persis */
+        .sidebar {
+            width: 250px;
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            left: 0; top: 0;
+        }
+        .sidebar h2 { text-align: center; margin-top: 20px; color: white; }
+        .sidebar img { width: 100%; height: auto; margin-bottom: 20px; }
+        .sidebar a { display: block; color: white; text-decoration: none; padding: 10px; margin: 10px 0; background-color: #0056b3; border-radius: 5px; text-align: center; font-weight: 600; font-size: 13px; transition: background 0.2s; }
+        .sidebar a:hover { background-color: #002147; }
+        .sidebar a.active { background-color: #28a745; }
+
+        /* MAIN */
+        .main-content { margin-left: 250px; padding: 30px 20px; width: calc(100% - 250px); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+        .profile-card { background: #fff; border-radius: 16px; width: 100%; max-width: 560px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .topbar { padding: 1rem 1.5rem 0; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; text-decoration: none; }
+        .back-btn:hover { color: #0369a1; }
+        .card-header { background: linear-gradient(135deg, #0c4a6e, #0369a1, #38bdf8); padding: 1.75rem 1.5rem 1.5rem; display: flex; align-items: center; gap: 16px; margin-top: 0.75rem; }
+        .avatar { width: 68px; height: 68px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: #fff; border: 2px solid rgba(255,255,255,0.45); }
+        .username { font-size: 18px; font-weight: 700; color: #fff; margin: 0 0 6px; }
+        .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,0.2); color: #fff; font-weight: 500; border: 1px solid rgba(255,255,255,0.35); }
+        .card-body { padding: 1.5rem; }
+        .section-title { font-size: 11px; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; margin-bottom: 0.75rem; }
+        .info-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid #f1f5f9; }
+        .info-row:last-child { border-bottom: none; }
+        .info-icon { font-size: 17px; color: #38bdf8; width: 20px; flex-shrink: 0; }
+        .info-label { font-size: 13px; color: #94a3b8; width: 95px; flex-shrink: 0; }
+        .info-value { font-size: 14px; color: #1e293b; font-weight: 500; }
+        .status-aktif { font-size: 14px; font-weight: 600; color: #16a34a; }
+        .divider { height: 1px; background: #f1f5f9; margin: 1.25rem 0; }
+        .logout-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: transparent; color: #dc2626; font-size: 14px; cursor: pointer; text-decoration: none; font-weight: 500; }
+        .logout-btn:hover { background: #fef2f2; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Profile Gate Superintendent</h2>
-        <div class="profile-info">
-            <p><strong>Username: </strong>{{ session['username'] }}</p>
-            <p><strong>Email: </strong>gatesuper@example.com</p>
-            <p><strong>Role: </strong>Gate Superintendent</p>
-            <!-- You can add more profile fields here -->
+<div class="sidebar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Pelindo_II_logo.svg/200px-Pelindo_II_logo.svg.png" alt="Pelindo TPS Logo">
+    <h2>Login Request System</h2>
+    <a href="/dashboard_gate">📊 Dashboard</a>
+    <a href="/monitoring_gate">📋 Monitoring</a>
+    <a href="/profile_gate" class="active">👤 Profile</a>
+    <a href="/logout">🚪 Logout</a>
+</div>
+
+<div class="main-content">
+    <div class="profile-card">
+        <div class="topbar">
+            <a href="{{ url_for('dashboard_gate') }}" class="back-btn">
+                <i class="ti ti-arrow-left"></i> Kembali
+            </a>
         </div>
-        <a href="/logout" class="btn">Logout</a>
+
+        <div class="card-header">
+            <div class="avatar">{{ session['username'][:2].upper() }}</div>
+            <div>
+                <p class="username">{{ session['username'] }}</p>
+                <span class="badge">
+                    <i class="ti ti-barrier-block" style="font-size:12px"></i>
+                    Gate Superintendent
+                </span>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <p class="section-title">Informasi akun</p>
+
+            <div class="info-row">
+                <i class="ti ti-user info-icon"></i>
+                <span class="info-label">Username</span>
+                <span class="info-value">{{ session['username'] }}</span>
+            </div>
+            <div class="info-row">
+                <i class="ti ti-mail info-icon"></i>
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ session['email'] }}</span>
+            </div>
+            <div class="info-row">
+                <i class="ti ti-id-badge info-icon"></i>
+                <span class="info-label">Role</span>
+                <span class="info-value">Gate Superintendent</span>
+            </div>
+            <div class="info-row">
+                <i class="ti ti-circle-check" style="font-size:17px; color:#16a34a; width:20px; flex-shrink:0;"></i>
+                <span class="info-label">Status</span>
+                <span class="status-aktif">Aktif</span>
+            </div>
     </div>
+</div>
 
 </body>
 </html>

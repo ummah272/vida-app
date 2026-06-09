@@ -448,16 +448,14 @@
                    placeholder="PT. / CV. ..." required>
         </div>
 
-
-
         <!-- BAGIAN 2: Data Pengiriman -->
         <div class="section-divider">Data Pengiriman</div>
 
         <div class="row-2">
             <div class="form-group">
-                <label for="no_job_order">No Job Order <span class="req">*</span></label>
+                <label for="no_job_order">No Job Order</label>
                 <input type="text" name="no_job_order" id="no_job_order"
-                       placeholder="Contoh: JO-2025-001" required>
+                       placeholder="Contoh: JO-2025-001">
             </div>
             <div class="form-group">
                 <label for="nomor_kontainer">No Container <span class="req">*</span></label>
@@ -468,9 +466,9 @@
 
         <div class="row-2">
             <div class="form-group">
-                <label for="no_booking">No Booking <span class="req">*</span></label>
+                <label for="no_booking">No Booking</label>
                 <input type="text" name="no_booking" id="no_booking"
-                       placeholder="Contoh: BK-2025-XXX" required>
+                       placeholder="Contoh: BK-2025-XXX">
             </div>
             <div class="form-group">
                 <label for="tanggal_pengajuan">Tanggal Pengajuan <span class="req">*</span></label>
@@ -491,9 +489,10 @@
                 <label for="jenis_permohonan">Jenis Permohonan <span class="req">*</span></label>
                 <select name="jenis_permohonan" id="jenis_permohonan" required>
                     <option value="" disabled selected>-- Pilih jenis --</option>
-                    <option value="pemasukan">Pemasukan Barang</option>
-                    <option value="pengeluaran">Pengeluaran Barang</option>
-                    <option value="relokasi">Relokasi Kontainer</option>
+                    <option value="Salah_terminal">Salah Terminal</option>
+                    <option value="Belum_Booking">Belum Booking</option>
+                    <option value="Closing">Closing</option>
+                    <option value="Damage">Damage</option>
                     <option value="lainnya">Lainnya</option>
                 </select>
             </div>
@@ -517,14 +516,6 @@
 
         <!-- BAGIAN 5: Dokumentasi Foto Kontainer -->
         <div class="section-divider">Dokumentasi Foto Kontainer di EA</div>
-
-        <!-- Gallery Foto yang sudah ada -->
-<!--        <div class="gallery-section">
-            <div class="gallery-header">📷 Foto Dokumentasi yang Sudah Ada</div>
-            <div id="existingGallery" class="gallery-grid">
-                <div class="gallery-empty">Belum ada foto dokumentasi</div>
-            </div>
-        </div>> -->
 
         <!-- Upload Form -->
         <div class="form-group">
@@ -581,28 +572,6 @@
 </div>
 
 <script>
-    // ── Load existing photos from server ──
-    //async function loadExistingPhotos() {
-     //   try {
-     //       const response = await fetch('/api/dokumentasi-foto');
-     //       const data = await response.json();
-      //      const gallery = document.getElementById('existingGallery');
-            
-       //     if (data.photos && data.photos.length > 0) {
-       //         gallery.innerHTML = '';
-       //         data.photos.forEach(photo => {
-       //             const item = document.createElement('div');
-       //             item.className = 'gallery-item';
-       //             item.innerHTML = `<img src="/static/dokumentasi_foto/${photo}" alt="${photo}">`;
-       //             item.onclick = () => openModal(`/static/dokumentasi_foto/${photo}`);
-       //             gallery.appendChild(item);
-       //         });
-       //     }
-       // } catch (error) {
-       //     console.error('Error loading photos:', error);
-      //  }
-  //  }
-
     // ── Modal functions ──
     function openModal(imageSrc) {
         document.getElementById('modalImg').src = imageSrc;
@@ -624,9 +593,7 @@
     document.getElementById('formPermohonan').addEventListener('submit', function(e) {
         const requiredFields = [
             'nama_perusahaan',
-            'no_job_order',
             'nomor_kontainer',
-            'no_booking',
             'tanggal_pengajuan',
             'nopol_truck',
             'jenis_permohonan',
@@ -657,9 +624,7 @@
             
             const fieldLabels = {
                 'nama_perusahaan': 'Nama Perusahaan',
-                'no_job_order': 'No Job Order',
                 'nomor_kontainer': 'No Container',
-                'no_booking': 'No Booking',
                 'tanggal_pengajuan': 'Tanggal Pengajuan',
                 'nopol_truck': 'Nopol Truck',
                 'jenis_permohonan': 'Jenis Permohonan',
@@ -785,9 +750,6 @@
         fileInput.files = dt.files;
         displayPreviews();
     }
-
-    // Load existing photos when page loads
-    window.addEventListener('DOMContentLoaded', loadExistingPhotos);
 </script>
 </body>
 </html>

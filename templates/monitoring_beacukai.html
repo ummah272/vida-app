@@ -7,44 +7,33 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-        }
-
-        html, body {
-            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
-            background-color: #f0f4f8;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            background-color: #f0f4f8;
             display: flex;
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: 280px;
-            background: linear-gradient(180deg, #003366 0%, #004d99 100%);
+            background: linear-gradient(135deg, #003366 0%, #004d99 100%);
             padding: 30px 20px;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            left: 0;
+            top: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            flex-shrink: 0;
-            height: 100%;
-            overflow-y: auto;
             box-shadow: 4px 0 16px rgba(0,0,0,0.1);
         }
 
         .sidebar img {
             width: 80px;
             height: auto;
-            object-fit: contain;
             filter: brightness(0) invert(1);
         }
 
@@ -58,7 +47,6 @@
 
         .sidebar a {
             width: 100%;
-            display: block;
             color: white;
             text-decoration: none;
             padding: 14px 16px;
@@ -66,40 +54,30 @@
             text-align: center;
             font-weight: 600;
             font-size: 14px;
-            transition: all 0.3s ease;
             background: rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
         }
 
-        .sidebar a:hover {
-            background: rgba(255,255,255,0.25);
-        }
+        .sidebar a:hover { background: rgba(255,255,255,0.25); }
+        .sidebar a.active { background: #28a745; }
 
-        .sidebar a.active {
-            background: #28a745;
-            color: white;
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .main-wrapper {
-            flex: 1;
+        .main-content {
+            margin-left: 280px;
             padding: 20px;
+            width: calc(100% - 280px);
             overflow-y: auto;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background-color: white;
+            background: white;
             border-radius: 12px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.1);
             padding: 30px;
         }
 
-        .header-wrapper {
-            margin-bottom: 24px;
-        }
-
-        .header-content h1 {
+        h1 {
             color: #1a1a2e;
             margin-bottom: 8px;
             font-size: 28px;
@@ -109,23 +87,6 @@
             color: #6b7280;
             margin-bottom: 24px;
             font-size: 14px;
-        }
-
-        .flash { 
-            padding: 12px 16px; 
-            border-radius: 8px; 
-            margin-bottom: 16px; 
-            font-size: 13px; 
-        }
-        .flash.success { 
-            background: #d1fae5; 
-            color: #065f46; 
-            border: 1px solid #6ee7b7; 
-        }
-        .flash.error { 
-            background: #fee2e2; 
-            color: #991b1b; 
-            border: 1px solid #fca5a5; 
         }
 
         .filter-bar {
@@ -146,8 +107,7 @@
             transition: all 0.2s;
         }
 
-        .filter-btn:hover,
-        .filter-btn.active {
+        .filter-btn:hover, .filter-btn.active {
             background: #28a745;
             color: white;
             border-color: #28a745;
@@ -160,7 +120,6 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 16px;
         }
 
         th {
@@ -178,9 +137,7 @@
             font-size: 13px;
         }
 
-        tr:hover {
-            background: #f9fafb;
-        }
+        tr:hover { background: #f9fafb; }
 
         .status-badge {
             display: inline-block;
@@ -190,20 +147,9 @@
             font-weight: 600;
         }
 
-        .status-menunggu {
-            background: #fef3c7;
-            color: #78350f;
-        }
-
-        .status-disetujui {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-ditolak {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+        .status-menunggu { background: #fef3c7; color: #78350f; }
+        .status-disetujui { background: #d1fae5; color: #065f46; }
+        .status-ditolak { background: #fee2e2; color: #991b1b; }
 
         .action-buttons {
             display: flex;
@@ -221,34 +167,15 @@
             transition: all 0.2s;
         }
 
-        .btn-approve {
-            background: #10b981;
-            color: white;
-        }
+        .btn-view { background: #3b82f6; color: white; }
+        .btn-view:hover { background: #2563eb; }
 
-        .btn-approve:hover {
-            background: #059669;
-        }
+        .btn-approve { background: #10b981; color: white; }
+        .btn-approve:hover { background: #059669; }
 
-        .btn-reject {
-            background: #ef4444;
-            color: white;
-        }
+        .btn-reject { background: #ef4444; color: white; }
+        .btn-reject:hover { background: #dc2626; }
 
-        .btn-reject:hover {
-            background: #dc2626;
-        }
-
-        .btn-view {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-view:hover {
-            background: #2563eb;
-        }
-
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -262,15 +189,13 @@
             justify-content: center;
         }
 
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
 
         .modal-content {
             background: white;
             border-radius: 12px;
             padding: 24px;
-            max-width: 600px;
+            max-width: 500px;
             width: 90%;
             box-shadow: 0 20px 25px rgba(0,0,0,0.15);
         }
@@ -284,8 +209,6 @@
 
         .modal-body {
             margin-bottom: 20px;
-            max-height: 60vh;
-            overflow-y: auto;
         }
 
         .form-group {
@@ -306,7 +229,6 @@
             border: 1.5px solid #d1d5db;
             border-radius: 7px;
             font-size: 13px;
-            font-family: inherit;
             min-height: 80px;
             outline: none;
         }
@@ -330,23 +252,11 @@
             border: none;
         }
 
-        .btn-submit {
-            background: #28a745;
-            color: white;
-        }
+        .btn-submit { background: #28a745; color: white; }
+        .btn-submit:hover { background: #218838; }
 
-        .btn-submit:hover {
-            background: #218838;
-        }
-
-        .btn-cancel {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        .btn-cancel:hover {
-            background: #d1d5db;
-        }
+        .btn-cancel { background: #e5e7eb; color: #374151; }
+        .btn-cancel:hover { background: #d1d5db; }
 
         .modal-close {
             float: right;
@@ -355,103 +265,31 @@
             color: #1a1a2e;
         }
 
-        .modal-close:hover {
-            color: #1a1a2e;
+        .flash {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #9ca3af;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-
-        .detail-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .detail-table td {
-            padding: 8px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .detail-table td:first-child {
-            font-weight: 600;
-            width: 40%;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                padding: 16px;
-                gap: 16px;
-                flex-direction: row;
-                align-items: center;
-                justify-content: flex-start;
-                flex-wrap: wrap;
-            }
-
-            .sidebar img {
-                width: 50px;
-                margin: 0;
-            }
-
-            .sidebar h2 {
-                font-size: 14px;
-                margin: 0;
-                flex: 1;
-                min-width: 150px;
-            }
-
-            .sidebar a {
-                padding: 8px 12px;
-                font-size: 12px;
-                min-width: 100px;
-            }
-
-            .main-wrapper {
-                padding: 20px;
-            }
-
-            .container {
-                padding: 20px;
-            }
-
-            .header-content h1 {
-                font-size: 22px;
-            }
-        }
+        .flash.success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .flash.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
     </style>
 </head>
 <body>
-    <!-- SIDEBAR di SISI KIRI -->
     <div class="sidebar">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Pelindo_II_logo.svg/200px-Pelindo_II_logo.svg.png" alt="Pelindo TPS Logo">
         <h2>Login Request System</h2>
-        <a href="/monitoring_beacukai" class="active">📋 Monitoring</a>
-        <a href="/profile_beacukai">📊 profile</a>
+        <a href="/dashboard_beacukai">📊 Dashboard</a>
+        <a href="/monitoring_beacukai" class="active">📋 Approval</a>
+        <a href="/profile_beacukai">👤 Profile</a>
         <a href="/logout">🚪 Logout</a>
     </div>
 
-    <!-- MAIN CONTENT di SISI KANAN -->
-    <div class="main-wrapper">
+    <div class="main-content">
         <div class="container">
-            <div class="header-wrapper">
-                <div class="header-content">
-                    <h1>📋 Monitoring Permohonan Kontainer</h1>
-                    <p class="subtitle">Bea Cukai - Verifikasi dan Persetujuan Permohonan</p>
-                </div>
-            </div>
+            <h1>📋 Approval Request</h1>
+            <p class="subtitle">Bea Cukai - Verifikasi dan Persetujuan Permohonan</p>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
@@ -497,10 +335,10 @@
                             <td>{{ permohonan.tanggal_pengajuan }}</td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn-view" onclick="lihatDetail('{{ permohonan.id }}')">👁️ Lihat</button>
+                                    <button class="btn-view" onclick="lihatDetail({{ permohonan.id }})">👁️ Lihat</button>
                                     {% if permohonan.status == 'Menunggu' %}
-                                    <button class="btn-approve" onclick="openApproveModal('{{ permohonan.id }}')">✅ Approve</button>
-                                    <button class="btn-reject" onclick="openRejectModal('{{ permohonan.id }}')">❌ Reject</button>
+                                    <button class="btn-approve" onclick="openApproveModal({{ permohonan.id }})">✅ Approve</button>
+                                    <button class="btn-reject" onclick="openRejectModal({{ permohonan.id }})">❌ Reject</button>
                                     {% endif %}
                                 </div>
                             </td>
@@ -510,15 +348,14 @@
                 </table>
             </div>
             {% else %}
-            <div class="empty-state">
-                <div class="empty-state-icon">📭</div>
-                <p>Tidak ada permohonan yang menunggu verifikasi</p>
+            <div style="text-align: center; padding: 40px; color: #999;">
+                <p>📭 Tidak ada permohonan</p>
             </div>
             {% endif %}
         </div>
     </div>
 
-    <!-- Modal Detail Permohonan -->
+    <!-- Modal Detail -->
     <div id="detailModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeDetailModal()">&times;</span>
@@ -531,18 +368,13 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('approveModal')">&times;</span>
             <div class="modal-header">Setujui Permohonan</div>
-            <form method="POST" id="approveForm">
-                <input type="hidden" name="action" value="approve">
-                <input type="hidden" name="permohonan_id" id="approvePermohonanId">
-                <div class="form-group">
-                    <label>Catatan (Opsional)</label>
-                    <textarea name="catatan" placeholder="Tambahkan catatan untuk permohonan ini..."></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal('approveModal')">Batal</button>
-                    <button type="submit" class="btn-submit">Setujui Permohonan</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menyetujui permohonan ini?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('approveModal')">Batal</button>
+                <button class="btn-submit" onclick="submitApprove()">Setujui</button>
+            </div>
         </div>
     </div>
 
@@ -551,22 +383,22 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('rejectModal')">&times;</span>
             <div class="modal-header">Tolak Permohonan</div>
-            <form method="POST" id="rejectForm">
-                <input type="hidden" name="action" value="reject">
-                <input type="hidden" name="permohonan_id" id="rejectPermohonanId">
+            <form onsubmit="submitReject(event)">
                 <div class="form-group">
                     <label>Alasan Penolakan</label>
-                    <textarea name="catatan" placeholder="Jelaskan alasan penolakan..." required></textarea>
+                    <textarea id="alasanReject" name="alasan" required placeholder="Jelaskan alasan penolakan..."></textarea>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeModal('rejectModal')">Batal</button>
-                    <button type="submit" class="btn-submit" style="background: #ef4444;">Tolak Permohonan</button>
+                    <button type="submit" class="btn-submit" style="background: #ef4444;">Tolak</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
+        let currentPermohonanId = null;
+
         function filterStatus(status) {
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
@@ -582,13 +414,13 @@
             });
         }
 
-        function openApproveModal(permohonanId) {
-            document.getElementById('approvePermohonanId').value = permohonanId;
+        function openApproveModal(id) {
+            currentPermohonanId = id;
             document.getElementById('approveModal').classList.add('active');
         }
 
-        function openRejectModal(permohonanId) {
-            document.getElementById('rejectPermohonanId').value = permohonanId;
+        function openRejectModal(id) {
+            currentPermohonanId = id;
             document.getElementById('rejectModal').classList.add('active');
         }
 
@@ -600,25 +432,74 @@
             document.getElementById('detailModal').classList.remove('active');
         }
 
+        function submitApprove() {
+            if (!currentPermohonanId) return;
+
+            fetch(`/api/permohonan/${currentPermohonanId}/approve`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    location.reload();
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Terjadi kesalahan: ' + error);
+            });
+
+            closeModal('approveModal');
+        }
+
+        function submitReject(event) {
+            event.preventDefault();
+            
+            if (!currentPermohonanId) return;
+
+            const alasan = document.getElementById('alasanReject').value;
+
+            fetch(`/api/permohonan/${currentPermohonanId}/reject`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ alasan: alasan })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    location.reload();
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Terjadi kesalahan: ' + error);
+            });
+
+            closeModal('rejectModal');
+        }
+
         async function lihatDetail(permohonanId) {
             try {
-                const url = '/api/permohonan/' + permohonanId;
-                const response = await fetch(url);
+                const response = await fetch(`/api/permohonan/${permohonanId}`);
                 const data = await response.json();
                 
                 let html = '<div class="modal-header">Detail Permohonan</div>';
                 html += '<div class="modal-body">';
-                html += '<table class="detail-table">';
-                html += '<tr><td>Nama Perusahaan</td><td>' + data.nama_perusahaan + '</td></tr>';
-                html += '<tr><td>No Job Order</td><td>' + data.no_job_order + '</td></tr>';
-                html += '<tr><td>No Container</td><td><strong>' + data.nomor_kontainer + '</strong></td></tr>';
-                html += '<tr><td>No Booking</td><td>' + data.no_booking + '</td></tr>';
-                html += '<tr><td>Nopol Truck</td><td>' + data.nopol_truck + '</td></tr>';
-                html += '<tr><td>Jenis Permohonan</td><td>' + data.jenis_permohonan + '</td></tr>';
-                html += '<tr><td>Kendala</td><td>' + data.kendala + '</td></tr>';
-                html += '<tr><td>Remark</td><td>' + (data.remark || '-') + '</td></tr>';
-                html += '<tr><td>Tanggal Pengajuan</td><td>' + data.tanggal_pengajuan + '</td></tr>';
-                html += '<tr><td>Status</td><td><span class="status-badge status-' + data.status.toLowerCase() + '">' + data.status + '</span></td></tr>';
+                html += '<table style="width:100%; border-collapse:collapse;">';
+                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600; width:40%;">Nama Perusahaan</td><td style="padding:8px;">' + data.nama_perusahaan + '</td></tr>';
+                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">No Job Order</td><td style="padding:8px;">' + data.no_job_order + '</td></tr>';
+                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">No Container</td><td style="padding:8px;"><strong>' + data.nomor_kontainer + '</strong></td></tr>';
+                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">No Booking</td><td style="padding:8px;">' + data.no_booking + '</td></tr>';
+                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">Nopol Truck</td><td style="padding:8px;">' + data.nopol_truck + '</td></tr>';
+                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">Jenis Permohonan</td><td style="padding:8px;">' + data.jenis_permohonan + '</td></tr>';
+                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">Status</td><td style="padding:8px;"><span class="status-badge status-' + data.status.toLowerCase() + '">' + data.status + '</span></td></tr>';
                 html += '</table>';
                 
                 if (data.file_surat) {
@@ -636,18 +517,14 @@
         }
 
         window.onclick = function(event) {
-            const approveModal = document.getElementById('approveModal');
-            const rejectModal = document.getElementById('rejectModal');
-            const detailModal = document.getElementById('detailModal');
-            
-            if (event.target === approveModal) {
-                approveModal.classList.remove('active');
+            if (event.target == document.getElementById('approveModal')) {
+                document.getElementById('approveModal').classList.remove('active');
             }
-            if (event.target === rejectModal) {
-                rejectModal.classList.remove('active');
+            if (event.target == document.getElementById('rejectModal')) {
+                document.getElementById('rejectModal').classList.remove('active');
             }
-            if (event.target === detailModal) {
-                detailModal.classList.remove('active');
+            if (event.target == document.getElementById('detailModal')) {
+                document.getElementById('detailModal').classList.remove('active');
             }
         };
     </script>

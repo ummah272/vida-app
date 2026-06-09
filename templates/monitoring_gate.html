@@ -207,7 +207,7 @@
 
 <div class="container">
     <div class="header">
-        <h2>📋 Monitoring Pengajuan Kontainer</h2>
+        <h2>📋 Monitoring Request</h2>
         <a href="{{ url_for('dashboard_gate') }}" class="back-btn">← Kembali</a>
     </div>
 
@@ -270,14 +270,6 @@
 
                             <!-- Connector 3 to 4 -->
                             <div class="timeline-connector {% if item.status == 'Disetujui' and item.file_surat %}done{% endif %}"></div>
-
-                            <!-- Step 4: CS Monitor (Akhir) -->
-                            <div class="timeline-step">
-                                <div class="step-icon {% if item.status == 'Disetujui' and item.file_surat %}done{% else %}pending{% endif %}">
-                                    {% if item.status == 'Disetujui' and item.file_surat %}✔{% else %}–{% endif %}
-                                </div>
-                                <div class="step-label">CS<br>Monitor</div>
-                            </div>
 
                             <!-- Surat Link -->
                             {% if item.status == 'Disetujui' and item.file_surat %}

@@ -41,6 +41,17 @@
             margin: 10px 0;
             border-radius: 5px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 14px;
         }
 
         button {
@@ -52,10 +63,62 @@
             font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         button:hover {
             background-color: #0056b3;
+        }
+
+        .divider {
+            margin: 30px 0;
+            border-top: 1px solid #e0e0e0;
+            position: relative;
+        }
+
+        .divider-text {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0 10px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .signup-section {
+            margin-top: 20px;
+        }
+
+        .signup-text {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+
+        .signup-btn:hover {
+            background-color: #218838;
+        }
+
+        .form-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -64,18 +127,32 @@
     <div class="login-container">
         <img src="/path_to_logo/login.png" alt="Pelindo Logo">
         <h2>Login Request System</h2>
+        
+        <!-- LOGIN FORM -->
         <form method="POST">
+            <div class="form-title">Silakan login dengan akun Anda</div>
+            
             <label for="role">Login sebagai:</label>
             <select name="role" id="role">
                 <option value="Bea Cukai">Bea Cukai</option>
                 <option value="Gate Superintendent">Gate Superintendent</option>
-            </select><br><br>
+            </select>
 
-            <div class="form-title"></div>
-            <input type="email" name="email" id="email" placeholder="Email" required><br><br>
-            <input type="password" name="password" id="password" placeholder="Password" required><br><br>
-            <button type="submit">Login</button>
+            <input type="email" name="email" id="email" placeholder="Email" required>
+            <input type="password" name="password" id="password" placeholder="Password" required>
+            
+            <button type="submit">🔐 Login</button>
         </form>
+
+        <!-- SIGNUP SECTION -->
+        <div class="divider">
+            <div class="divider-text">atau</div>
+        </div>
+
+        <div class="signup-section">
+            <div class="signup-text">📝 Belum punya akun?</div>
+            <a href="/signup" class="signup-btn">Daftar Akun Baru</a>
+        </div>
     </div>
 </body>
 
