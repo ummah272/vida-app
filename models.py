@@ -5,11 +5,12 @@ db = SQLAlchemy()
 
 class Pengguna(db.Model):
     __tablename__ = 'pengguna'
-    id = db.Column(db.Integer, primary_key=True)
-    nama = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False)
+    id       = db.Column(db.Integer, primary_key=True)
+    nama     = db.Column(db.String(255), nullable=False)
+    nip      = db.Column(db.String(50),  nullable=True)   # ← tambah ini
+    email    = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(50), nullable=False)  # EMKL, CS, Bea Cukai
+    role     = db.Column(db.String(50),  nullable=False)
 
 class Permohonan(db.Model):
     id                  = db.Column(db.Integer, primary_key=True)

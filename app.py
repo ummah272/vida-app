@@ -80,6 +80,7 @@ def signup():
             new_user = Pengguna(
                 nama=nama,
                 email=email,
+                nip=nip,
                 password=password,
                 role=role
             )
@@ -100,252 +101,240 @@ def signup():
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# FUNCTION: GENERATE SURAT DENGAN PLACEHOLDER TTD BC & GATE (1 HALAMAN)
+# FUNCTION: GENERATE SURAT PERMOHONAN PDF - KOP OTOMATIS TIAP HALAMAN
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def generate_surat_dengan_ttd_gate_pdf(data: dict, foto_files: list = None, nama_gate: str = None, tgl_ttd: str = None) -> str:
+def _terbilang_foto(n: int) -> str:
+    kata = ['nol','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh']
+    return kata[n] if n <= 10 else str(n)
+
+
+def generate_surat_dengan_ttd_gate_pdf(data: dict, foto_files: list = None, nama_gate: str = None, nip_gate: str = None, tgl_ttd: str = None) -> str:
     """
-    Generate surat permohonan PDF dari gate
-    SUDAH INCLUDE placeholder TTD BC & TTD Gate (2 kolom, 1 halaman)
-    
-    Saat dibuat: Gate TTD terisi, BC placeholder kosong
-    Saat BC approve: BC placeholder diisi otomatis
+    Generate surat permohonan PDF dari gate.
+    - Kop surat otomatis tiap halaman
+    - TTD Gate: nama + NIP dari session
     """
     from reportlab.lib.pagesizes import A4
     from reportlab.lib import colors
     from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.units import cm
+    from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_JUSTIFY
     from datetime import datetime
     from werkzeug.utils import secure_filename
     import os
-    
-    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    filename = secure_filename(f"surat_permohonan_{data['nomor_kontainer']}_{timestamp}.pdf")
-    filepath = os.path.join(SURAT_FOLDER, filename)
-    
-    # Create PDF
-    doc = SimpleDocTemplate(filepath, pagesize=A4, topMargin=1*cm, bottomMargin=1*cm)
-    elements = []
+
+    timestamp  = datetime.now().strftime('%Y%m%d%H%M%S')
+    filename   = secure_filename(f"surat_permohonan_{data['nomor_kontainer']}_{timestamp}.pdf")
+    filepath   = os.path.join(SURAT_FOLDER, filename)
+
+    PAGE_W, PAGE_H = A4
+    LEFT_M  = 2.5 * cm
+    RIGHT_M = 2.5 * cm
+    TOP_M   = 1.5 * cm
+    BOT_M   = 2.0 * cm
+    KOP_H   = 3.2 * cm
+    page_w  = PAGE_W - LEFT_M - RIGHT_M
+
+    base_dir     = os.path.dirname(os.path.abspath(__file__))
+    logo_path    = os.path.join(base_dir, 'static', 'logo',   'logo_sistem_2.png')
+    barcode_path = os.path.join(base_dir, 'static', 'images', 'barcode_ttd.png')
+
     styles = getSampleStyleSheet()
-    
-    # Custom styles
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Normal'],
-        fontSize=14,
-        textColor=colors.HexColor('#1a1a2e'),
-        spaceAfter=6,
-        alignment=1,  # CENTER
-        fontName='Helvetica-Bold'
-    )
-    
-    subtitle_style = ParagraphStyle(
-        'CustomSubtitle',
-        parent=styles['Normal'],
-        fontSize=12,
-        textColor=colors.HexColor('#1a1a2e'),
-        spaceAfter=12,
-        alignment=1,  # CENTER
-        fontName='Helvetica-Bold'
-    )
-    
-    body_style = ParagraphStyle(
-        'CustomBody',
-        parent=styles['Normal'],
-        fontSize=10,
-        textColor=colors.HexColor('#1a1a2e'),
-        spaceAfter=6,
-        alignment=4,  # JUSTIFY
-    )
-    
-    info_style = ParagraphStyle(
-        'Info',
-        parent=styles['Normal'],
-        fontSize=9,
-        textColor=colors.HexColor('#1a1a2e'),
-        spaceAfter=3,
-    )
-    
-    # HEADER
-    elements.append(Paragraph("PT. PELINDO III - TERMINAL PETIKEMAS", title_style))
-    elements.append(Spacer(1, 0.3*cm))
-    elements.append(Paragraph("_" * 80, body_style))
-    elements.append(Spacer(1, 0.3*cm))
-    
-    elements.append(Paragraph("SURAT PERMOHONAN", title_style))
-    elements.append(Spacer(1, 0.2*cm))
-    elements.append(Paragraph("PENGAJUAN KONTAINER EMKL", subtitle_style))
-    elements.append(Spacer(1, 0.3*cm))
-    
-    #nomor surat
-    from datetime import datetime
-    # Get bulan & tahun
-    bulan = datetime.now().strftime('%m')  # 05 untuk Mei
-    tahun = datetime.now().strftime('%Y')  # 2026
+    def S(name, **kw):
+        return ParagraphStyle(name, parent=styles['Normal'], **kw)
 
-    # Get nomor urutan surat (total permohonan + 1)
+    st_center_bold = S('CB',  fontSize=12, fontName='Helvetica-Bold', alignment=TA_CENTER, spaceAfter=2)
+    st_center      = S('C',   fontSize=10, fontName='Helvetica',      alignment=TA_CENTER, spaceAfter=2)
+    st_body        = S('B',   fontSize=10, fontName='Helvetica',      alignment=TA_JUSTIFY, spaceAfter=4, leading=16)
+    st_body_indent = S('BI',  fontSize=10, fontName='Helvetica',      alignment=TA_JUSTIFY, firstLineIndent=1*cm, spaceAfter=4, leading=16)
+    st_bold        = S('Bo',  fontSize=10, fontName='Helvetica-Bold',  spaceAfter=4)
+    st_small       = S('Sm',  fontSize=9,  fontName='Helvetica',      spaceAfter=2)
+    st_ttd_c       = S('TC',  fontSize=10, fontName='Helvetica',      alignment=TA_CENTER, spaceAfter=2)
+    st_ttd_cb      = S('TCB', fontSize=10, fontName='Helvetica-Bold', alignment=TA_CENTER, spaceAfter=2)
+    st_ttd_right   = S('TR',  fontSize=10, fontName='Helvetica',      alignment=TA_RIGHT,  spaceAfter=2)
+    st_ttd_small   = S('TS',  fontSize=9,  fontName='Helvetica',      alignment=TA_CENTER, spaceAfter=2)
+
+    bulan      = datetime.now().strftime('%m')
+    tahun      = datetime.now().strftime('%Y')
     nomor_urut = Permohonan.query.count() + 1
-    no_surat_urut = f"{nomor_urut:03d}"  # 001, 002, 003, dst
-
-    # Format nomor surat
-    no_surat = f"BC/{no_surat_urut}/TPK/{bulan}/{tahun}"
-
-    bulan = datetime.now().strftime('%m')
-    tahun = datetime.now().strftime('%Y')
-    nomor_urut = Permohonan.query.count() + 1
-    no_surat = f"BC/{nomor_urut:03d}/TPK/{bulan}/{tahun}"
-
-    # Tanggal
+    no_surat   = f"BC/{nomor_urut:03d}/TPK/{bulan}/{tahun}"
     tgl_format = datetime.strptime(data['tanggal_pengajuan'], '%Y-%m-%d').strftime('%d %B %Y')
-    
-    elements.append(Paragraph(f"<b>Nomor Surat</b> : {no_surat}", info_style))
-    elements.append(Paragraph(f"<b>Tanggal</b> : {tgl_format}", info_style))
-    elements.append(Spacer(1, 0.3*cm))
-    
-    # Addressed to
-    elements.append(Paragraph("Kepada Yth.", body_style))
-    elements.append(Paragraph("Kepala Bea dan Cukai / Gate Pengeluaran Kontainer", body_style))
-    elements.append(Paragraph("di Tempat", body_style))
+    kota_tgl   = f"Surabaya, {tgl_format}"
+
+    def draw_kop(canv, doc):
+        canv.saveState()
+        y_top = PAGE_H - TOP_M
+        if os.path.exists(logo_path):
+            canv.drawImage(logo_path, LEFT_M, y_top - 2.6*cm,
+                           width=2.5*cm, height=2.5*cm,
+                           preserveAspectRatio=True, mask='auto')
+        center_x = PAGE_W / 2
+        canv.setFont('Helvetica-Bold', 12)
+        canv.drawCentredString(center_x, y_top - 0.7*cm, "PT. PELINDO III - TERMINAL PETIKEMAS SURABAYA")
+        canv.setFont('Helvetica', 10)
+        canv.drawCentredString(center_x, y_top - 1.3*cm, "Terminal Kontainer dan Kepelabuhanan")
+        canv.drawCentredString(center_x, y_top - 1.8*cm, "Jl. Tanjung Mutiara No. 1, Surabaya, Indonesia")
+        canv.drawCentredString(center_x, y_top - 2.3*cm, "Telp. (031) 3298631  |  Email: info@tps.co.id")
+        garis_y = y_top - KOP_H + 0.2*cm
+        canv.setStrokeColor(colors.HexColor('#003366'))
+        canv.setLineWidth(2)
+        canv.line(LEFT_M, garis_y, PAGE_W - RIGHT_M, garis_y)
+        canv.restoreState()
+
+    doc = SimpleDocTemplate(
+        filepath, pagesize=A4,
+        topMargin=TOP_M + KOP_H, bottomMargin=BOT_M,
+        leftMargin=LEFT_M, rightMargin=RIGHT_M,
+    )
+    elements = []
+
     elements.append(Spacer(1, 0.2*cm))
-    
-    # Opening
-    elements.append(Paragraph("Dengan hormat,", body_style))
-    elements.append(Spacer(1, 0.1*cm))
-    
-    opening_text = f"""Sehubungan dengan permohonan yang telah diajukan oleh <b>{data['nama_perusahaan']}</b> dan telah ditandatangani oleh Gate Superintendent, 
-    dengan ini kami sampaikan data permohonan berikut:"""
-    elements.append(Paragraph(opening_text, body_style))
-    elements.append(Spacer(1, 0.2*cm))
-    
-    # TABLE DATA
-    table_data = [
-        ['Nama Perusahaan', data['nama_perusahaan']],
-        ['No Job Order', data['no_job_order']],
-        ['Nomor Kontainer', data['nomor_kontainer']],
-        ['No Booking', data['no_booking']],
-        ['Nopol Truck', data['nopol_truck']],
-        ['Jenis Permohonan', data['jenis_permohonan'].replace('_', ' ').title()],
-        ['Tanggal Pengajuan', tgl_format],
-    ]
-    
-    table = Table(table_data, colWidths=[3*cm, 13*cm])
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor("#4D647C")),
-        ('TEXTCOLOR', (0, 0), (0, -1), colors.black),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, -1), 9),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-        ('TOPPADDING', (0, 0), (-1, -1), 8),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f0f4f8')]),
+    elements.append(Paragraph("<b>SURAT PERMOHONAN</b>", st_center_bold))
+    elements.append(Spacer(1, 0.4*cm))
+
+    meta_table = Table([
+        ['Nomor',   f': {no_surat}'],
+        ['Tanggal', f': {tgl_format}'],
+        ['Perihal', ': PENGELUARAN KONTAINER EXCEPTION AREA'],
+    ], colWidths=[3.5*cm, page_w - 3.5*cm])
+    meta_table.setStyle(TableStyle([
+        ('FONTNAME',      (0,0), (-1,-1), 'Helvetica'),
+        ('FONTSIZE',      (0,0), (-1,-1), 10),
+        ('FONTNAME',      (0,0), (0,-1),  'Helvetica-Bold'),
+        ('VALIGN',        (0,0), (-1,-1), 'TOP'),
+        ('TOPPADDING',    (0,0), (-1,-1), 3),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 3),
+        ('LEFTPADDING',   (0,0), (-1,-1), 0),
     ]))
-    elements.append(table)
+    elements.append(meta_table)
+    elements.append(Spacer(1, 0.5*cm))
+
+    elements.append(Paragraph("Kepada Yth.", st_body))
+    elements.append(Paragraph("Kepala Bea Cukai", st_body))
+    elements.append(Paragraph("di Tempat", st_body))
     elements.append(Spacer(1, 0.3*cm))
-    
-    # Kendala & Remark
-    elements.append(Paragraph("<b>Kendala:</b>", body_style))
-    elements.append(Paragraph(data['kendala'], body_style))
+
+    elements.append(Paragraph("Dengan hormat,", st_body))
+    elements.append(Paragraph(
+        "Bersama surat ini kami mengajukan permohonan pengeluaran kontainer pada area "
+        "exception untuk diproses lebih lanjut sesuai ketentuan yang berlaku. Adapun data "
+        "permohonan yang diajukan adalah sebagai berikut:",
+        st_body_indent
+    ))
+    elements.append(Spacer(1, 0.3*cm))
+
+    data_table = Table([
+        ['Nama Perusahaan',  data['nama_perusahaan']],
+        ['No. Job Order',    data.get('no_job_order') or '-'],
+        ['No. Booking',      data.get('no_booking') or '-'],
+        ['No. Container',    data['nomor_kontainer']],
+        ['No. Polisi',       data['nopol_truck']],
+        ['Jenis Permohonan', data['jenis_permohonan'].replace('_',' ').title()],
+    ], colWidths=[4*cm, page_w - 4*cm])
+    data_table.setStyle(TableStyle([
+        ('FONTNAME',      (0,0), (-1,-1), 'Helvetica'),
+        ('FONTSIZE',      (0,0), (-1,-1), 10),
+        ('GRID',          (0,0), (-1,-1), 0.5, colors.black),
+        ('ALIGN',         (0,0), (-1,-1), 'LEFT'),
+        ('VALIGN',        (0,0), (-1,-1), 'MIDDLE'),
+        ('TOPPADDING',    (0,0), (-1,-1), 6),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+        ('LEFTPADDING',   (0,0), (-1,-1), 8),
+        ('RIGHTPADDING',  (0,0), (-1,-1), 8),
+        ('ROWBACKGROUNDS',(0,0), (-1,-1), [colors.white, colors.HexColor('#f5f7fa')]),
+    ]))
+    elements.append(data_table)
+    elements.append(Spacer(1, 0.4*cm))
+
+    elements.append(Paragraph("<b>Kendala :</b>", st_bold))
+    elements.append(Paragraph(data.get('kendala', '-'), st_body))
     elements.append(Spacer(1, 0.2*cm))
-    
-    elements.append(Paragraph("<b>Remark & Catatan Khusus:</b>", body_style))
-    elements.append(Paragraph(data['remark'] if data.get('remark') else "-", body_style))
-    elements.append(Spacer(1, 0.3*cm))
-    
-    # DOKUMENTASI FOTO
+
+    elements.append(Paragraph("<b>Catatan Khusus :</b>", st_bold))
+    elements.append(Paragraph(data.get('remark') or '-', st_body))
+    elements.append(Spacer(1, 0.2*cm))
+
     if foto_files:
-        elements.append(Paragraph("<b>Dokumentasi Foto Kontainer di EA:</b>", body_style))
-        elements.append(Paragraph(f"Jumlah file foto: {len(foto_files)}", info_style))
+        elements.append(Paragraph("<b>Dokumentasi Pendukung :</b>", st_bold))
+        elements.append(Paragraph(
+            f"Terlampir {len(foto_files)} ({_terbilang_foto(len(foto_files))}) foto kontainer sebagai dokumen pendukung permohonan.",
+            st_body
+        ))
         elements.append(Spacer(1, 0.2*cm))
-        
         for idx, foto_filename in enumerate(foto_files, 1):
             foto_path = os.path.join(FOTO_FOLDER, foto_filename.strip())
             if os.path.exists(foto_path):
                 try:
-                    img = Image(foto_path, width=10*cm, height=7*cm)
-                    elements.append(Paragraph(f"<b>Foto {idx}:</b>", info_style))
-                    elements.append(img)
+                    elements.append(Image(foto_path, width=10*cm, height=7*cm))
                     elements.append(Spacer(1, 0.3*cm))
-                except Exception as e:
-                    elements.append(Paragraph(f"[Foto {idx} tidak bisa ditampilkan]", info_style))
-    
+                except Exception:
+                    elements.append(Paragraph(f"[Foto {idx} tidak bisa ditampilkan]", st_small))
+
     if data.get('keterangan_tambahan'):
-        elements.append(Paragraph("<b>Keterangan Tambahan:</b>", body_style))
-        elements.append(Paragraph(data['keterangan_tambahan'], body_style))
-        elements.append(Spacer(1, 0.3*cm))
-    
+        elements.append(Paragraph("<b>Keterangan Tambahan :</b>", st_bold))
+        elements.append(Paragraph(data['keterangan_tambahan'], st_body))
+        elements.append(Spacer(1, 0.2*cm))
+
     elements.append(Spacer(1, 0.3*cm))
-    
-    # Closing
-    elements.append(Paragraph("Demikian permohonan ini kami sampaikan. Atas perhatian dan kerja samanya, kami ucapkan terima kasih.", body_style))
+    elements.append(Paragraph(
+        "Demikian permohonan ini disampaikan untuk dapat dipertimbangkan dan diproses "
+        "sebagaimana mestinya. Atas perhatian dan kerja sama yang diberikan, kami ucapkan terima kasih.",
+        st_body_indent
+    ))
     elements.append(Spacer(1, 0.5*cm))
-    
-    # ══════════════════════════════════════════════════════════════════
-    # BAGIAN TTD - 2 KOLOM (BC & GATE) - DALAM 1 HALAMAN YANG SAMA
-    # ══════════════════════════════════════════════════════════════════
-    
-    elements.append(Paragraph("_" * 80, info_style))
+
+    # ══════════════════════════════════════
+    # TTD — 2 KOLOM: BC (kiri) & Gate (kanan)
+    # ══════════════════════════════════════
+    col_w = page_w / 2
+
+    elements.append(Paragraph(kota_tgl, st_ttd_right))
     elements.append(Spacer(1, 0.3*cm))
-    
-    # Signature table (2 kolom) - placeholder untuk BC & Gate
-    barcode_img = RLImage(os.path.join(BASE_DIR, 'static', 'images', 'barcode_ttd.png'), 
-                      width=3*cm, height=3*cm)
-    stempel_img = RLImage(os.path.join(BASE_DIR, 'static', 'images', 'stempel_bc.jpg'), 
-                      width=3*cm, height=3*cm)
-    sig_data = [
-    ['Pejabat Bea dan Cukai', 'Gate Superintendent'],
-    ['', ''],
-    ['', 'dengan ini menyetujui'],
-    ['', barcode_img],  # ← BC kosong, Gate punya barcode
-    [f'_______________', f'✓ Nama: {nama_gate if nama_gate else "_______________"}'],
-    ['(____________________)', '(______________________)'],
-    ]
-    
-    sig_table = Table(sig_data, colWidths=[7.5*cm, 7.5*cm])
-    sig_table.setStyle(TableStyle([
-        # Header - bold
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 10),
-        
-        # Semua cell align center
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        
-        # Padding
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('LEFTPADDING', (0, 0), (-1, -1), 10),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 10),
-        
-        # No grid (clean look)
-        ('GRID', (0, 0), (-1, -1), 0, colors.white),
-        
-        # Border hanya di bawah header
-        ('LINEBELOW', (0, 0), (-1, 0), 1, colors.black),
+
+    gate_ttd_cell = Image(barcode_path, width=3*cm, height=3*cm) if os.path.exists(barcode_path) else Paragraph("", st_ttd_c)
+
+    # Nama + NIP Gate di baris terakhir TTD
+    nama_gate_display = nama_gate or 'Gate Superintendent'
+    nip_gate_display  = nip_gate or '-'
+
+    ttd_table = Table([
+        [Paragraph("Disetujui oleh,",      st_ttd_c),  Paragraph("Diajukan oleh,",        st_ttd_c)],
+        [Paragraph("Bea Cukai",            st_ttd_cb), Paragraph("Gate Superintendent",   st_ttd_cb)],
+        [Paragraph("",                     st_ttd_c),  gate_ttd_cell],
+        [
+            Paragraph(f"", st_ttd_c),
+            Paragraph(f"( {nama_gate_display} )", st_ttd_c)
+        ],
+        [
+            Paragraph("", st_ttd_small),
+            Paragraph(f"NIP: {nip_gate_display}", st_ttd_small)
+        ],
+    ], colWidths=[col_w, col_w])
+
+    ttd_table.setStyle(TableStyle([
+        ('ALIGN',        (0,0), (-1,-1), 'CENTER'),
+        ('VALIGN',       (0,0), (-1,-1), 'MIDDLE'),
+        ('TOPPADDING',   (0,0), (-1,-1), 4),
+        ('BOTTOMPADDING',(0,0), (-1,-1), 4),
+        ('LEFTPADDING',  (0,0), (-1,-1), 0),
+        ('RIGHTPADDING', (0,0), (-1,-1), 0),
+        ('ROWHEIGHT',    (0,2), (-1,2),  60),
     ]))
-    
-    elements.append(sig_table)
-    elements.append(Spacer(1, 0.4*cm))
-    
-    # Tanggal TTD Gate
-    if tgl_ttd:
-        elements.append(Paragraph(f"Tanggal TTD Gate: <b>{tgl_ttd}</b>", info_style))
-    
-    # Build PDF
-    doc.build(elements)
-    
+    elements.append(ttd_table)
+
+    doc.build(elements, onFirstPage=draw_kop, onLaterPages=draw_kop)
     return filename
 
 
-def update_surat_dengan_ttd_bc_pdf(file_surat, nama_bc: str, tanggal_bc: str):
+# ═══════════════════════════════════════════════════════════════════════════════
+# FUNCTION: UPDATE SURAT - OVERLAY STEMPEL BC KE HALAMAN TERAKHIR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def update_surat_dengan_ttd_bc_pdf(file_surat, nama_bc: str, tanggal_bc: str, nip_bc: str = None):
     """
-    Update surat - OVERLAY stempel BC ke placeholder TTD BC (di halaman yang sama)
-    
-    Args:
-        file_surat: nama file surat yang sudah ada
-        nama_bc: nama Bea Cukai yang approve
-        tanggal_bc: tanggal approval
+    Update surat - overlay stempel + nama + NIP BC ke halaman terakhir
     """
     from PyPDF2 import PdfReader, PdfWriter
     from reportlab.pdfgen import canvas
@@ -353,66 +342,58 @@ def update_surat_dengan_ttd_bc_pdf(file_surat, nama_bc: str, tanggal_bc: str):
     from reportlab.lib.units import cm
     from io import BytesIO
     import os
-    
+
     try:
-        # ── PATH FILE SURAT ──
         file_path = os.path.join(SURAT_FOLDER, file_surat)
-        
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File surat tidak ditemukan: {file_path}")
-        
-        stempel_path = os.path.join(BASE_DIR, 'static', 'images', 'stempel_bc.jpg')
-        
-        # ── READ EXISTING PDF ──
-        pdf_reader = PdfReader(file_path)
-        pdf_writer = PdfWriter()
-        
-        # ── OVERLAY KE HALAMAN TERAKHIR (TTD PAGE) ──
-        last_page_idx = len(pdf_reader.pages) - 1
-        last_page = pdf_reader.pages[last_page_idx]
-        
-        # Create overlay canvas dengan stempel BC
+
+        base_dir     = os.path.dirname(os.path.abspath(__file__))
+        stempel_path = os.path.join(base_dir, 'static', 'images', 'stempel_bc.jpg')
+
+        pdf_reader     = PdfReader(file_path)
+        pdf_writer     = PdfWriter()
+        last_page_idx  = len(pdf_reader.pages) - 1
+        last_page      = pdf_reader.pages[last_page_idx]
+
         overlay_buffer = BytesIO()
         overlay_canvas = canvas.Canvas(overlay_buffer, pagesize=A4)
-        
-        # ── DRAW STEMPEL BC ──
-        # Posisi: kolom kiri TTD BC (X=75, Y=300 untuk stempel image)
+
+        # ── STEMPEL BC ──
         if os.path.exists(stempel_path):
             try:
-                # Draw image stempel (4cm x 4cm)
-                overlay_canvas.drawImage(stempel_path, 150, 380, width=3*cm, height=3*cm)
+                overlay_canvas.drawImage(stempel_path, 140, 280, width=3*cm, height=3*cm)
             except Exception as e:
                 app.logger.warning(f"Stempel image error: {str(e)}")
-        
-        # ── DRAW TEXT NAMA BC + TANGGAL ──
+
+        # ── NAMA BC ──
         overlay_canvas.setFont("Helvetica-Bold", 9)
-        overlay_canvas.drawString(150, 365, f"✓ {nama_bc}")
-        
-        overlay_canvas.setFont("Helvetica", 8)
-        overlay_canvas.drawString(150, 355, f"Tanggal: {tanggal_bc}")
-        
+        overlay_canvas.drawCentredString(180, 275, f"✓ {nama_bc}")
+
+        # ── NIP BC ──
+        nip_display = nip_bc or '-'
+        overlay_canvas.setFont("Helvetica", 9)
+        overlay_canvas.drawCentredString(180, 248, f"NIP: {nip_display}")
+
         overlay_canvas.save()
         overlay_buffer.seek(0)
-        
-        # ── MERGE PDF + OVERLAY ──
-        overlay_pdf = PdfReader(overlay_buffer)
+
+        overlay_pdf  = PdfReader(overlay_buffer)
         overlay_page = overlay_pdf.pages[0]
         last_page.merge_page(overlay_page)
-        
-        # ── ADD ALL PAGES TO WRITER ──
+
         for page_num in range(len(pdf_reader.pages)):
             if page_num == last_page_idx:
                 pdf_writer.add_page(last_page)
             else:
                 pdf_writer.add_page(pdf_reader.pages[page_num])
-        
-        # ── SAVE UPDATED PDF ──
+
         with open(file_path, 'wb') as output_file:
             pdf_writer.write(output_file)
-        
-        app.logger.info(f"Surat {file_surat} berhasil diupdate dengan stempel BC {nama_bc}")
+
+        app.logger.info(f"Surat {file_surat} diupdate dengan stempel BC {nama_bc} NIP {nip_display}")
         return True
-        
+
     except Exception as e:
         app.logger.error(f"Error update_surat_dengan_ttd_bc_pdf: {str(e)}")
         raise Exception(f"Gagal update surat: {str(e)}")
@@ -494,6 +475,7 @@ def permohonan():
                 data=data,
                 foto_files=saved_foto_files,
                 nama_gate=nama_gate,
+                nip_gate=session.get('nip'),
                 tgl_ttd=tgl_ttd
             )
  
@@ -660,6 +642,7 @@ def approve_permohonan(permohonan_id):
         update_surat_dengan_ttd_bc_pdf(
             file_surat=permohonan.file_surat,
             nama_bc=nama_bc,
+            nip_bc=session.get('nip'),
             tanggal_bc=tanggal_bc
         )
  
@@ -839,6 +822,7 @@ def login():
             session['username'] = user.nama
             session['user_id'] = user.id
             session['email'] = user.email
+            session['nip'] = user.nip
             
             if user.role == 'CS':
                 return redirect(url_for('dashboard_cs'))

@@ -21,7 +21,7 @@
             left: 0; top: 0;
         }
         .sidebar h2 { text-align: center; margin-top: 20px; color: white; }
-        .sidebar img { width: 100%; height: auto; margin-bottom: 20px; }
+        .sidebar img { width: 60%; height: auto; margin: 0 auto 16px auto; display: block;}
         .sidebar a { display: block; color: white; text-decoration: none; padding: 10px; margin: 10px 0; background-color: #0056b3; border-radius: 5px; text-align: center; font-weight: 600; font-size: 13px; transition: background 0.2s; }
         .sidebar a:hover { background-color: #002147; }
         .sidebar a.active { background-color: #28a745; }
@@ -52,7 +52,7 @@
 <body>
 
 <div class="sidebar">
-    <img src="{{ url_for('static', filename='logo/logo sistem 2.png') }}" alt="TPS Logo">
+    <img src="{{ url_for('static', filename='logo/logo_sistem_2.png') }}" alt="TPS Logo">
     <h2>Login Request System</h2>
     <a href="/dashboard_gate">📊 Dashboard</a>
     <a href="/monitoring_gate">📋 Monitoring</a>
@@ -91,6 +91,11 @@
                 <i class="ti ti-mail info-icon"></i>
                 <span class="info-label">Email</span>
                 <span class="info-value">{{ session['email'] }}</span>
+            </div>
+                <div class="info-row">
+                <i class="ti ti-mail info-icon"></i>
+                <span class="info-label">Nip</span>
+                <span class="info-value">{{ session['nip'] }}</span>
             </div>
             <div class="info-row">
                 <i class="ti ti-id-badge info-icon"></i>
