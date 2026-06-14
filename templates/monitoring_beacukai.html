@@ -89,33 +89,78 @@
             font-size: 14px;
         }
 
-        .filter-bar {
+        /* Filter + Sort Bar */
+        .controls-bar {
             display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 12px;
             margin-bottom: 24px;
             flex-wrap: wrap;
         }
 
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .filter-btn {
-            padding: 8px 16px;
-            border: 1.5px solid #d1d5db;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border: 1.5px solid #e5e7eb;
             background: white;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.2s;
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            color: #374151;
         }
 
-        .filter-btn:hover, .filter-btn.active {
-            background: #28a745;
+        .filter-btn:hover { border-color: #003366; color: #003366; }
+
+        .filter-btn.active-all {
+            background: #003366;
             color: white;
-            border-color: #28a745;
+            border-color: #003366;
         }
 
-        .table-wrapper {
-            overflow-x: auto;
+        .filter-btn.active-menunggu {
+            background: #fef3c7;
+            color: #78350f;
+            border-color: #f59e0b;
         }
+
+        .filter-btn.active-disetujui {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .filter-btn.active-ditolak {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        .filter-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .table-wrapper { overflow-x: auto; }
 
         table {
             width: 100%;
@@ -129,6 +174,19 @@
             text-align: left;
             font-weight: 600;
             font-size: 13px;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th.sortable:hover { background: #002244; }
+
+        .sort-icon {
+            margin-left: 6px;
+            font-size: 11px;
+            opacity: 0.8;
         }
 
         td {
@@ -176,13 +234,19 @@
         .btn-reject { background: #ef4444; color: white; }
         .btn-reject:hover { background: #dc2626; }
 
+        .no-result {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0,0,0,0.5);
             z-index: 1000;
             align-items: center;
@@ -207,13 +271,9 @@
             color: #1a1a2e;
         }
 
-        .modal-body {
-            margin-bottom: 20px;
-        }
+        .modal-body { margin-bottom: 20px; }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
 
         .form-group label {
             display: block;
@@ -231,6 +291,7 @@
             font-size: 13px;
             min-height: 80px;
             outline: none;
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
         }
 
         .form-group textarea:focus {
@@ -248,8 +309,6 @@
             padding: 10px 16px;
             border-radius: 6px;
             font-size: 13px;
-            cursor: pointer;
-            border: none;
         }
 
         .btn-submit { background: #28a745; color: white; }
@@ -278,9 +337,8 @@
 </head>
 <body>
     <div class="sidebar">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Pelindo_II_logo.svg/200px-Pelindo_II_logo.svg.png" alt="Pelindo TPS Logo">
+        <img src="{{ url_for('static', filename='logo/logo sistem 2.png') }}" alt="TPS Logo">
         <h2>Login Request System</h2>
-        <a href="/dashboard_beacukai">📊 Dashboard</a>
         <a href="/monitoring_beacukai" class="active">📋 Approval</a>
         <a href="/profile_beacukai">👤 Profile</a>
         <a href="/logout">🚪 Logout</a>
@@ -299,14 +357,30 @@
               {% endif %}
             {% endwith %}
 
-            <div class="filter-bar">
-                <button class="filter-btn active" onclick="filterStatus('all')">Semua</button>
-                <button class="filter-btn" onclick="filterStatus('Menunggu')">⏳ Menunggu</button>
-                <button class="filter-btn" onclick="filterStatus('Disetujui')">✅ Disetujui</button>
-                <button class="filter-btn" onclick="filterStatus('Ditolak')">❌ Ditolak</button>
+            {% if pengajuan_kontainer %}
+
+            <!-- Controls: Filter + Sort -->
+            <div class="controls-bar">
+                <div class="filter-bar">
+                    <button class="filter-btn active-all" onclick="filterStatus('all', this)">
+                        Semua
+                        <span class="filter-count">{{ pengajuan_kontainer|length }}</span>
+                    </button>
+                    <button class="filter-btn" onclick="filterStatus('menunggu', this)">
+                        ⏳ Menunggu
+                        <span class="filter-count">{{ pengajuan_kontainer|selectattr('status', 'equalto', 'Menunggu')|list|length }}</span>
+                    </button>
+                    <button class="filter-btn" onclick="filterStatus('disetujui', this)">
+                        ✅ Disetujui
+                        <span class="filter-count">{{ pengajuan_kontainer|selectattr('status', 'equalto', 'Disetujui')|list|length }}</span>
+                    </button>
+                    <button class="filter-btn" onclick="filterStatus('ditolak', this)">
+                        ❌ Ditolak
+                        <span class="filter-count">{{ pengajuan_kontainer|selectattr('status', 'equalto', 'Ditolak')|list|length }}</span>
+                    </button>
+                </div>
             </div>
 
-            {% if pengajuan_kontainer %}
             <div class="table-wrapper">
                 <table id="tabelPermohonan">
                     <thead>
@@ -316,13 +390,15 @@
                             <th>Perusahaan</th>
                             <th>Jenis Permohonan</th>
                             <th>Status</th>
-                            <th>Tanggal Pengajuan</th>
+                            <th class="sortable" onclick="sortByTanggal()" id="th-tanggal">
+                                Tanggal Pengajuan <span class="sort-icon" id="sort-icon">▼</span>
+                            </th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tableBody">
                         {% for permohonan in pengajuan_kontainer %}
-                        <tr class="status-{{ permohonan.status|lower|replace(' ', '') }}">
+                        <tr data-status="{{ permohonan.status|lower }}" data-tanggal="{{ permohonan.tanggal_pengajuan }}">
                             <td><strong>{{ permohonan.no_job_order }}</strong></td>
                             <td><strong>{{ permohonan.nomor_kontainer }}</strong></td>
                             <td>{{ permohonan.nama_perusahaan }}</td>
@@ -346,7 +422,12 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
+                <div class="no-result" id="noResult">
+                    🔍 Tidak ada data dengan status ini
+                </div>
             </div>
+
             {% else %}
             <div style="text-align: center; padding: 40px; color: #999;">
                 <p>📭 Tidak ada permohonan</p>
@@ -383,37 +464,68 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('rejectModal')">&times;</span>
             <div class="modal-header">Tolak Permohonan</div>
-            <form onsubmit="submitReject(event)">
-                <div class="form-group">
-                    <label>Alasan Penolakan</label>
-                    <textarea id="alasanReject" name="alasan" required placeholder="Jelaskan alasan penolakan..."></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal('rejectModal')">Batal</button>
-                    <button type="submit" class="btn-submit" style="background: #ef4444;">Tolak</button>
-                </div>
-            </form>
+            <div class="form-group" style="margin-top:12px;">
+                <label>Alasan Penolakan</label>
+                <textarea id="alasanReject" placeholder="Jelaskan alasan penolakan..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('rejectModal')">Batal</button>
+                <button class="btn-submit" style="background:#ef4444;" onclick="submitReject()">Tolak</button>
+            </div>
         </div>
     </div>
 
     <script>
         let currentPermohonanId = null;
+        let currentFilter = 'all';
+        let sortAsc = false; // default: terbaru di atas
 
-        function filterStatus(status) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            const rows = document.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                if (status === 'all') {
-                    row.style.display = '';
-                } else {
-                    const rowStatus = row.querySelector('.status-badge').textContent.trim();
-                    row.style.display = rowStatus === status ? '' : 'none';
-                }
+        // ── FILTER ──
+        function filterStatus(status, btn) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.className = 'filter-btn';
             });
+            btn.classList.add('active-' + status);
+            applyFilter();
         }
 
+        function applyFilter() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            let visible = 0;
+            rows.forEach(row => {
+                const rowStatus = row.getAttribute('data-status');
+                const match = currentFilter === 'all' || rowStatus === currentFilter;
+                row.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+            document.getElementById('noResult').style.display = visible === 0 ? 'block' : 'none';
+        }
+
+        // ── SORT ──
+        function sortByTanggal() {
+            sortAsc = !sortAsc;
+            document.getElementById('sort-icon').textContent = sortAsc ? '▲' : '▼';
+
+            const tbody = document.getElementById('tableBody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            rows.sort((a, b) => {
+                const tA = a.getAttribute('data-tanggal') || '';
+                const tB = b.getAttribute('data-tanggal') || '';
+                return sortAsc ? tA.localeCompare(tB) : tB.localeCompare(tA);
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Default sort desc (terbaru di atas) saat load
+        window.addEventListener('DOMContentLoaded', () => {
+            sortAsc = true;
+            sortByTanggal();
+        });
+
+        // ── MODAL ──
         function openApproveModal(id) {
             currentPermohonanId = id;
             document.getElementById('approveModal').classList.add('active');
@@ -421,6 +533,7 @@
 
         function openRejectModal(id) {
             currentPermohonanId = id;
+            document.getElementById('alasanReject').value = '';
             document.getElementById('rejectModal').classList.add('active');
         }
 
@@ -434,54 +547,35 @@
 
         function submitApprove() {
             if (!currentPermohonanId) return;
-
             fetch(`/api/permohonan/${currentPermohonanId}/approve`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                if (data.success) {
-                    alert('✅ ' + data.message);
-                    location.reload();
-                } else {
-                    alert('❌ Error: ' + data.error);
-                }
+                alert(data.success ? '✅ ' + data.message : '❌ Error: ' + data.error);
+                if (data.success) location.reload();
             })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('❌ Terjadi kesalahan: ' + error);
-            });
-
+            .catch(err => alert('❌ Terjadi kesalahan: ' + err));
             closeModal('approveModal');
         }
 
-        function submitReject(event) {
-            event.preventDefault();
-            
+        function submitReject() {
             if (!currentPermohonanId) return;
-
-            const alasan = document.getElementById('alasanReject').value;
+            const alasan = document.getElementById('alasanReject').value.trim();
+            if (!alasan) { alert('Alasan penolakan harus diisi!'); return; }
 
             fetch(`/api/permohonan/${currentPermohonanId}/reject`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ alasan: alasan })
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                if (data.success) {
-                    alert('✅ ' + data.message);
-                    location.reload();
-                } else {
-                    alert('❌ Error: ' + data.error);
-                }
+                alert(data.success ? '✅ ' + data.message : '❌ Error: ' + data.error);
+                if (data.success) location.reload();
             })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('❌ Terjadi kesalahan: ' + error);
-            });
-
+            .catch(err => alert('❌ Terjadi kesalahan: ' + err));
             closeModal('rejectModal');
         }
 
@@ -489,43 +583,40 @@
             try {
                 const response = await fetch(`/api/permohonan/${permohonanId}`);
                 const data = await response.json();
-                
+
                 let html = '<div class="modal-header">Detail Permohonan</div>';
-                html += '<div class="modal-body">';
-                html += '<table style="width:100%; border-collapse:collapse;">';
-                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600; width:40%;">Nama Perusahaan</td><td style="padding:8px;">' + data.nama_perusahaan + '</td></tr>';
-                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">No Job Order</td><td style="padding:8px;">' + data.no_job_order + '</td></tr>';
-                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">No Container</td><td style="padding:8px;"><strong>' + data.nomor_kontainer + '</strong></td></tr>';
-                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">No Booking</td><td style="padding:8px;">' + data.no_booking + '</td></tr>';
-                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">Nopol Truck</td><td style="padding:8px;">' + data.nopol_truck + '</td></tr>';
-                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">Jenis Permohonan</td><td style="padding:8px;">' + data.jenis_permohonan + '</td></tr>';
-                html += '<tr><td style="padding:8px; border-bottom:1px solid #e5e7eb; font-weight:600;">Status</td><td style="padding:8px;"><span class="status-badge status-' + data.status.toLowerCase() + '">' + data.status + '</span></td></tr>';
+                html += '<div class="modal-body"><table style="width:100%; border-collapse:collapse;">';
+                const fields = [
+                    ['Nama Perusahaan', data.nama_perusahaan],
+                    ['No Job Order', data.no_job_order],
+                    ['No Container', '<strong>' + data.nomor_kontainer + '</strong>'],
+                    ['No Booking', data.no_booking],
+                    ['Nopol Truck', data.nopol_truck],
+                    ['Jenis Permohonan', data.jenis_permohonan],
+                    ['Status', '<span class="status-badge status-' + data.status.toLowerCase() + '">' + data.status + '</span>'],
+                ];
+                fields.forEach(([label, val]) => {
+                    html += `<tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;font-weight:600;width:40%;">${label}</td><td style="padding:8px;">${val}</td></tr>`;
+                });
                 html += '</table>';
-                
                 if (data.file_surat) {
-                    html += '<br><a href="/lihat_surat/' + data.file_surat + '" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600;">📄 Lihat Surat Permohonan</a>';
+                    html += `<br><a href="/lihat_surat/${data.file_surat}" target="_blank" style="color:#3b82f6;text-decoration:none;font-weight:600;">📄 Lihat Surat Permohonan</a>`;
                 }
-                
                 html += '</div>';
-                
+
                 document.getElementById('detailContent').innerHTML = html;
                 document.getElementById('detailModal').classList.add('active');
             } catch (error) {
-                console.error('Error:', error);
                 alert('Gagal mengambil detail permohonan');
             }
         }
 
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('approveModal')) {
-                document.getElementById('approveModal').classList.remove('active');
-            }
-            if (event.target == document.getElementById('rejectModal')) {
-                document.getElementById('rejectModal').classList.remove('active');
-            }
-            if (event.target == document.getElementById('detailModal')) {
-                document.getElementById('detailModal').classList.remove('active');
-            }
+        window.onclick = function(e) {
+            ['approveModal','rejectModal','detailModal'].forEach(id => {
+                if (e.target == document.getElementById(id)) {
+                    document.getElementById(id).classList.remove('active');
+                }
+            });
         };
     </script>
 </body>

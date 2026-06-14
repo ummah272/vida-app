@@ -29,7 +29,18 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            height: 48px;
+            object-fit: contain;
         }
 
         h2 {
@@ -50,13 +61,73 @@
             transition: background 0.2s;
         }
 
-        a.back-btn:hover {
-            background-color: #002244;
+        a.back-btn:hover { background-color: #002244; }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
-        .table-wrapper {
-            overflow-x: auto;
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: 1.5px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
         }
+
+        .filter-btn:hover { border-color: #003366; color: #003366; }
+
+        .filter-btn.active-semua {
+            background: #003366;
+            color: white;
+            border-color: #003366;
+        }
+
+        .filter-btn.active-menunggu {
+            background: #fef3c7;
+            color: #78350f;
+            border-color: #f59e0b;
+        }
+
+        .filter-btn.active-disetujui {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .filter-btn.active-ditolak {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        .filter-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .table-wrapper { overflow-x: auto; }
 
         table {
             width: 100%;
@@ -73,15 +144,28 @@
             font-size: 13px;
         }
 
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th.sortable:hover { background-color: #002244; }
+
+        .sort-icon {
+            margin-left: 6px;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
         td {
             border-bottom: 1px solid #e5e7eb;
             padding: 12px 14px;
             font-size: 13px;
         }
 
-        tr:hover {
-            background: #f9fafb;
-        }
+        tr:hover { background: #f9fafb; }
+
+        tr.hidden-row { display: none; }
 
         .status {
             display: inline-block;
@@ -91,26 +175,14 @@
             font-weight: 600;
         }
 
-        .status-menunggu {
-            background-color: #fef3c7;
-            color: #78350f;
-        }
-
-        .status-disetujui {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-ditolak {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
+        .status-menunggu { background-color: #fef3c7; color: #78350f; }
+        .status-disetujui { background-color: #d1fae5; color: #065f46; }
+        .status-ditolak { background-color: #fee2e2; color: #991b1b; }
 
         /* Timeline */
         .timeline {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
             gap: 0;
             min-width: 500px;
         }
@@ -135,18 +207,9 @@
             color: white;
         }
 
-        .step-icon.done {
-            background-color: #28a745;
-        }
-
-        .step-icon.pending {
-            background-color: #d1d5db;
-            color: #6b7280;
-        }
-
-        .step-icon.rejected {
-            background-color: #ef4444;
-        }
+        .step-icon.done { background-color: #28a745; }
+        .step-icon.pending { background-color: #d1d5db; color: #6b7280; }
+        .step-icon.rejected { background-color: #ef4444; }
 
         .step-label {
             font-size: 10px;
@@ -164,9 +227,7 @@
             flex-shrink: 0;
         }
 
-        .timeline-connector.done {
-            background-color: #28a745;
-        }
+        .timeline-connector.done { background-color: #28a745; }
 
         .surat-link {
             display: inline-block;
@@ -181,9 +242,7 @@
             white-space: nowrap;
         }
 
-        .surat-link:hover {
-            background-color: #002244;
-        }
+        .surat-link:hover { background-color: #002244; }
 
         .surat-unavailable {
             color: #999;
@@ -197,37 +256,99 @@
             color: #9ca3af;
         }
 
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+        .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+
+        .no-result {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .no-result-icon { font-size: 40px; margin-bottom: 8px; }
+
+        /* Alasan Penolakan */
+        .alasan-box {
+            background: #fff5f5;
+            border: 1px solid #fca5a5;
+            border-left: 4px solid #ef4444;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #7f1d1d;
+            max-width: 220px;
+            line-height: 1.5;
+        }
+
+        .alasan-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #ef4444;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .alasan-dash {
+            color: #d1d5db;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- Header -->
     <div class="header">
-        <h2>📋 Monitoring Request</h2>
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='logo/logo sistem 2.png') }}" alt="Logo" class="header-logo">
+            <h2>📋 Monitoring Request</h2>
+        </div>
         <a href="{{ url_for('dashboard_gate') }}" class="back-btn">← Kembali</a>
     </div>
 
     {% if pengajuan_kontainer %}
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <button class="filter-btn active-semua" onclick="filterStatus('semua', this)">
+            Semua
+            <span class="filter-count" id="count-semua">{{ pengajuan_kontainer|length }}</span>
+        </button>
+        <button class="filter-btn" onclick="filterStatus('menunggu', this)">
+            ⏳ Menunggu
+            <span class="filter-count" id="count-menunggu">{{ pengajuan_kontainer|selectattr('status', 'equalto', 'Menunggu')|list|length }}</span>
+        </button>
+        <button class="filter-btn" onclick="filterStatus('disetujui', this)">
+            ✅ Disetujui
+            <span class="filter-count" id="count-disetujui">{{ pengajuan_kontainer|selectattr('status', 'equalto', 'Disetujui')|list|length }}</span>
+        </button>
+        <button class="filter-btn" onclick="filterStatus('ditolak', this)">
+            ❌ Ditolak
+            <span class="filter-count" id="count-ditolak">{{ pengajuan_kontainer|selectattr('status', 'equalto', 'Ditolak')|list|length }}</span>
+        </button>
+    </div>
+
+    <!-- Table -->
     <div class="table-wrapper">
-        <table>
+        <table id="mainTable">
             <thead>
                 <tr>
                     <th>Nama Perusahaan</th>
                     <th>No Container</th>
                     <th>Nopol Truck</th>
                     <th>Jenis Permohonan</th>
-                    <th>Tanggal Pengajuan</th>
+                    <th class="sortable" onclick="sortByTanggal()" id="th-tanggal">
+                        Tanggal Pengajuan <span class="sort-icon" id="sort-icon">▼</span>
+                    </th>
                     <th>Status</th>
+                    <th>Alasan Penolakan</th>
                     <th>Progress</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tableBody">
                 {% for item in pengajuan_kontainer %}
-                <tr>
+                <tr data-status="{{ item.status|lower }}" data-tanggal="{{ item.tanggal_pengajuan }}">
                     <td><strong>{{ item.nama_perusahaan }}</strong></td>
                     <td><strong>{{ item.nomor_kontainer }}</strong></td>
                     <td>{{ item.nopol_truck }}</td>
@@ -239,39 +360,36 @@
                         </span>
                     </td>
                     <td>
+                        {% if item.status == 'Ditolak' and item.catatan %}
+                            <div class="alasan-box">
+                                <div class="alasan-label">⚠ Alasan BC</div>
+                                {{ item.catatan }}
+                            </div>
+                        {% else %}
+                            <span class="alasan-dash">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
                         <div class="timeline">
-                            <!-- Step 1: Gate Buat Pengajuan -->
                             <div class="timeline-step">
                                 <div class="step-icon done">✔</div>
                                 <div class="step-label">Gate<br>Pengajuan</div>
                             </div>
-
-                            <!-- Connector 1 to 2 -->
                             <div class="timeline-connector done"></div>
-
-                            <!-- Step 2: BC Approve/Reject -->
                             <div class="timeline-step">
                                 <div class="step-icon {% if item.status == 'Disetujui' %}done{% elif item.status == 'Ditolak' %}rejected{% else %}pending{% endif %}">
                                     {% if item.status == 'Disetujui' %}✔{% elif item.status == 'Ditolak' %}✘{% else %}–{% endif %}
                                 </div>
                                 <div class="step-label">BC<br>Approval</div>
                             </div>
-
-                            <!-- Connector 2 to 3 -->
                             <div class="timeline-connector {% if item.status == 'Disetujui' and item.file_surat %}done{% endif %}"></div>
-
-                            <!-- Step 3: Surat Ready -->
                             <div class="timeline-step">
                                 <div class="step-icon {% if item.status == 'Disetujui' and item.file_surat %}done{% else %}pending{% endif %}">
                                     {% if item.status == 'Disetujui' and item.file_surat %}✔{% else %}–{% endif %}
                                 </div>
                                 <div class="step-label">Surat<br>Ready</div>
                             </div>
-
-                            <!-- Connector 3 to 4 -->
                             <div class="timeline-connector {% if item.status == 'Disetujui' and item.file_surat %}done{% endif %}"></div>
-
-                            <!-- Surat Link -->
                             {% if item.status == 'Disetujui' and item.file_surat %}
                                 <div style="margin-left: 12px;">
                                     <a href="{{ url_for('lihat_surat', filename=item.file_surat) }}" target="_blank" class="surat-link">
@@ -289,7 +407,14 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <!-- Kalau hasil filter kosong -->
+        <div class="no-result" id="noResult">
+            <div class="no-result-icon">🔍</div>
+            <p>Tidak ada data dengan status ini</p>
+        </div>
     </div>
+
     {% else %}
     <div class="empty-state">
         <div class="empty-state-icon">📭</div>
@@ -298,6 +423,71 @@
     {% endif %}
 
 </div>
+
+<script>
+    let currentFilter = 'semua';
+    let sortAsc = false; // default: terbaru di atas (desc)
+
+    // Filter by status
+    function filterStatus(status, btn) {
+        currentFilter = status;
+
+        // Update active button style
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.className = 'filter-btn';
+        });
+        btn.classList.add('active-' + status);
+
+        applyFilter();
+    }
+
+    function applyFilter() {
+        const rows = document.querySelectorAll('#tableBody tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            const match = currentFilter === 'semua' || rowStatus === currentFilter;
+            if (match) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Tampilkan pesan kalau kosong
+        const noResult = document.getElementById('noResult');
+        noResult.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // Sort by tanggal
+    function sortByTanggal() {
+        sortAsc = !sortAsc;
+
+        const icon = document.getElementById('sort-icon');
+        icon.textContent = sortAsc ? '▲' : '▼';
+
+        const tbody = document.getElementById('tableBody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.sort((a, b) => {
+            const tA = a.getAttribute('data-tanggal') || '';
+            const tB = b.getAttribute('data-tanggal') || '';
+            return sortAsc
+                ? tA.localeCompare(tB)
+                : tB.localeCompare(tA);
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    // Jalankan sort desc (terbaru di atas) saat load
+    window.addEventListener('DOMContentLoaded', () => {
+        sortAsc = true;
+        sortByTanggal(); // trigger sekali = jadi desc
+    });
+</script>
 
 </body>
 </html>
