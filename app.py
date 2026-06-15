@@ -173,11 +173,11 @@ def generate_surat_dengan_ttd_gate_pdf(data: dict, foto_files: list = None, nama
                            preserveAspectRatio=True, mask='auto')
         center_x = PAGE_W / 2
         canv.setFont('Helvetica-Bold', 12)
-        canv.drawCentredString(center_x, y_top - 0.7*cm, "PT. MAJU JAYA LOGISTIK - TERMINAL PETI KEMAS NUSANTARA")
+        canv.drawCentredString(center_x, y_top - 0.7*cm, "PT. TERMINAL PETI KEMAS NUSANTARA")
         canv.setFont('Helvetica', 10)
         canv.drawCentredString(center_x, y_top - 1.3*cm, "Terminal Kontainer dan Kepelabuhanan")
         canv.drawCentredString(center_x, y_top - 1.8*cm, "Jl. Dermaga Raya No. 88, Jakarta Utara, Indonesia")
-        canv.drawCentredString(center_x, y_top - 2.3*cm, "Telp. (031) 3298631  |  mail: info@majujayalogistik.co.id")
+        canv.drawCentredString(center_x, y_top - 2.3*cm, "Telp. (031) 3298631  |  mail: jayalogistik@gmail.com")
         garis_y = y_top - KOP_H + 0.2*cm
         canv.setStrokeColor(colors.HexColor('#003366'))
         canv.setLineWidth(2)
