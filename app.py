@@ -49,12 +49,13 @@ def signup():
         try:
             nama = request.form.get('nama', '').strip()
             email = request.form.get('email', '').strip()
+            nip = request.form.get('nip', '').strip()
             password = request.form.get('password', '').strip()
             confirm_password = request.form.get('confirm_password', '').strip()
             role = request.form.get('role', '').strip()
             
             # ── VALIDASI ──
-            if not all([nama, email, password, confirm_password, role]):
+            if not all([nama, email, nip, password, confirm_password, role]):
                 flash('❌ Semua field harus diisi!', 'error')
                 return redirect(url_for('signup'))
             
@@ -172,11 +173,11 @@ def generate_surat_dengan_ttd_gate_pdf(data: dict, foto_files: list = None, nama
                            preserveAspectRatio=True, mask='auto')
         center_x = PAGE_W / 2
         canv.setFont('Helvetica-Bold', 12)
-        canv.drawCentredString(center_x, y_top - 0.7*cm, "PT. PELINDO III - TERMINAL PETIKEMAS SURABAYA")
+        canv.drawCentredString(center_x, y_top - 0.7*cm, "PT. MAJU JAYA LOGISTIK - TERMINAL PETI KEMAS NUSANTARA")
         canv.setFont('Helvetica', 10)
         canv.drawCentredString(center_x, y_top - 1.3*cm, "Terminal Kontainer dan Kepelabuhanan")
-        canv.drawCentredString(center_x, y_top - 1.8*cm, "Jl. Tanjung Mutiara No. 1, Surabaya, Indonesia")
-        canv.drawCentredString(center_x, y_top - 2.3*cm, "Telp. (031) 3298631  |  Email: info@tps.co.id")
+        canv.drawCentredString(center_x, y_top - 1.8*cm, "Jl. Dermaga Raya No. 88, Jakarta Utara, Indonesia")
+        canv.drawCentredString(center_x, y_top - 2.3*cm, "Telp. (031) 3298631  |  mail: info@majujayalogistik.co.id")
         garis_y = y_top - KOP_H + 0.2*cm
         canv.setStrokeColor(colors.HexColor('#003366'))
         canv.setLineWidth(2)
