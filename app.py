@@ -857,6 +857,24 @@ def profile_gate():
         return redirect(url_for('login'))
     return render_template('profile_gate.html')
 
+@app.route('/delete_account', methods=['POST'])
+def delete_account():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    try:
+        user = Pengguna.query.get(session['user_id'])
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            session.clear()
+            flash('✅ Akun berhasil dihapus.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'❌ Gagal menghapus akun: {str(e)}', 'error')
+    
+    return redirect(url_for('login'))
+
 # Route untuk logout
 @app.route('/logout')
 def logout():

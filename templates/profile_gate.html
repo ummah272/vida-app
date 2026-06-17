@@ -9,25 +9,23 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, sans-serif; background: #f0f4f8; display: flex; margin: 0; }
 
-        /* SIDEBAR - sama persis */
         .sidebar {
-            width: 250px;
-            background-color: #003366;
-            color: white;
-            padding: 20px;
-            height: 100vh;
-            overflow-y: auto;
-            position: fixed;
-            left: 0; top: 0;
-        }
+        width: 275px;          /* ← samain sama beacukai */
+        background-color: #003366;
+        color: white;
+        padding: 20px;
+        height: 100vh;
+        overflow-y: auto;
+        position: fixed;
+        left: 0; top: 0;
+    }
         .sidebar h2 { text-align: center; margin-top: 20px; color: white; }
         .sidebar img { width: 60%; height: auto; margin: 0 auto 16px auto; display: block;}
         .sidebar a { display: block; color: white; text-decoration: none; padding: 10px; margin: 10px 0; background-color: #0056b3; border-radius: 5px; text-align: center; font-weight: 600; font-size: 13px; transition: background 0.2s; }
         .sidebar a:hover { background-color: #002147; }
         .sidebar a.active { background-color: #28a745; }
 
-        /* MAIN */
-        .main-content { margin-left: 250px; padding: 30px 20px; width: calc(100% - 250px); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+        .main-content { margin-left: 250px; padding: 40px 20px; width: calc(100% - 250px); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
         .profile-card { background: #fff; border-radius: 16px; width: 100%; max-width: 560px; border: 1px solid #e2e8f0; overflow: hidden; }
         .topbar { padding: 1rem 1.5rem 0; }
         .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; text-decoration: none; }
@@ -44,9 +42,13 @@
         .info-label { font-size: 13px; color: #94a3b8; width: 95px; flex-shrink: 0; }
         .info-value { font-size: 14px; color: #1e293b; font-weight: 500; }
         .status-aktif { font-size: 14px; font-weight: 600; color: #16a34a; }
-        .divider { height: 1px; background: #f1f5f9; margin: 1.25rem 0; }
-        .logout-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: transparent; color: #dc2626; font-size: 14px; cursor: pointer; text-decoration: none; font-weight: 500; }
+        .divider { height: 1px; background: #f1f5f9; margin: 0; }
+        .card-footer { padding: 1.25rem 1.5rem; }
+        .logout-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: transparent; color: #dc2626; font-size: 14px; cursor: pointer; text-decoration: none; font-weight: 500; font-family: inherit; }
         .logout-btn:hover { background: #fef2f2; }
+        .delete-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: #dc2626; color: #fff; font-size: 14px; cursor: pointer; font-weight: 500; font-family: inherit; }
+        .delete-btn:hover { background: #b91c1c; }
+        .footer-actions { display: flex; gap: 10px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -62,6 +64,7 @@
 
 <div class="main-content">
     <div class="profile-card">
+
         <div class="topbar">
             <a href="{{ url_for('dashboard_gate') }}" class="back-btn">
                 <i class="ti ti-arrow-left"></i> Kembali
@@ -92,9 +95,9 @@
                 <span class="info-label">Email</span>
                 <span class="info-value">{{ session['email'] }}</span>
             </div>
-                <div class="info-row">
-                <i class="ti ti-mail info-icon"></i>
-                <span class="info-label">Nip</span>
+            <div class="info-row">
+                <i class="ti ti-id-badge-2 info-icon"></i>
+                <span class="info-label">NIP</span>
                 <span class="info-value">{{ session['nip'] }}</span>
             </div>
             <div class="info-row">
@@ -107,6 +110,20 @@
                 <span class="info-label">Status</span>
                 <span class="status-aktif">Aktif</span>
             </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="card-footer">
+            <div class="footer-actions">
+                <form method="POST" action="/delete_account" onsubmit="return confirm('Yakin mau hapus akun? Tindakan ini tidak bisa dibatalkan!')">
+                    <button type="submit" class="delete-btn">
+                        🗑️ Hapus Akun
+                    </button>
+                </form>
+            </div>
+        </div>
+
     </div>
 </div>
 
