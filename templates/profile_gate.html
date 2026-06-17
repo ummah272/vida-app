@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Profile Bea Cukai</title>
+    <title>Profile Gate</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
@@ -10,7 +10,6 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', Arial, sans-serif; background-color: #f0f4f8; display: flex; }
 
-        /* SIDEBAR - sama persis */
         .sidebar {
             width: 280px;
             background: linear-gradient(135deg, #003366 0%, #004d99 100%);
@@ -31,7 +30,6 @@
         .sidebar a:hover { background: rgba(255,255,255,0.25); }
         .sidebar a.active { background: #28a745; }
 
-        /* MAIN */
         .main-content { margin-left: 280px; padding: 30px 20px; width: calc(100% - 280px); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
         .profile-card { background: #fff; border-radius: 16px; width: 100%; max-width: 560px; border: 1px solid #e2e8f0; overflow: hidden; }
         .topbar { padding: 1rem 1.5rem 0; }
@@ -50,10 +48,33 @@
         .info-value { font-size: 14px; color: #1e293b; font-weight: 500; }
         .status-aktif { font-size: 14px; font-weight: 600; color: #16a34a; }
         .divider { height: 1px; background: #f1f5f9; margin: 1.25rem 0; }
+
+        .footer-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .edit-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #bfdbfe; background: #2563eb; color: #fff; font-size: 14px; cursor: pointer; font-weight: 500; font-family: inherit; }
+        .edit-btn:hover { background: #1d4ed8; }
         .delete-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: #dc2626; color: #fff; font-size: 14px; cursor: pointer; font-weight: 500; font-family: inherit; }
         .delete-btn:hover { background: #b91c1c; }
-        .logout-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: transparent; color: #dc2626; font-size: 14px; cursor: pointer; text-decoration: none; font-weight: 500; }
-        .logout-btn:hover { background: #fef2f2; }
+
+        /* Flash messages */
+        .flash { padding: 10px 16px; border-radius: 8px; margin: 0 1.5rem 1rem; font-size: 14px; }
+        .flash.success { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .flash.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+        /* MODAL */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; justify-content: center; align-items: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 460px; padding: 1.75rem; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .modal-title { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 13px; color: #64748b; margin-bottom: 6px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-family: inherit; color: #1e293b; outline: none; transition: border 0.2s; }
+        .form-group input:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,0.1); }
+        .form-group small { font-size: 12px; color: #94a3b8; margin-top: 4px; display: block; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 1.5rem; justify-content: flex-end; }
+        .btn-cancel { padding: 9px 20px; border-radius: 8px; border: 1px solid #e2e8f0; background: transparent; color: #64748b; font-size: 14px; cursor: pointer; font-family: inherit; font-weight: 500; }
+        .btn-cancel:hover { background: #f8fafc; }
+        .btn-save { padding: 9px 20px; border-radius: 8px; border: none; background: #2563eb; color: #fff; font-size: 14px; cursor: pointer; font-family: inherit; font-weight: 600; }
+        .btn-save:hover { background: #1d4ed8; }
     </style>
 </head>
 <body>
@@ -61,7 +82,7 @@
 <div class="sidebar">
     <img src="{{ url_for('static', filename='logo/logo_sistem_2.png') }}" alt="Logo Sistem">
     <h2>Login Request System</h2>
-     <a href="/dashboard_gate">📊 Dashboard</a>
+    <a href="/dashboard_gate">📊 Dashboard</a>
     <a href="/monitoring_gate">📋 Monitoring</a>
     <a href="/profile_gate" class="active">👤 Profile</a>
     <a href="/logout">🚪 Logout</a>
@@ -75,13 +96,21 @@
             </a>
         </div>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <div class="card-header">
             <div class="avatar">{{ session['username'][:2].upper() }}</div>
             <div>
                 <p class="username">{{ session['username'] }}</p>
                 <span class="badge">
                     <i class="ti ti-shield-check" style="font-size:12px"></i>
-                    Bea Cukai
+                    Gate Superintendent
                 </span>
             </div>
         </div>
@@ -99,9 +128,9 @@
                 <span class="info-label">Email</span>
                 <span class="info-value">{{ session['email'] }}</span>
             </div>
-                <div class="info-row">
-                <i class="ti ti-mail info-icon"></i>
-                <span class="info-label">Nip</span>
+            <div class="info-row">
+                <i class="ti ti-id-badge-2 info-icon"></i>
+                <span class="info-label">NIP</span>
                 <span class="info-value">{{ session['nip'] }}</span>
             </div>
             <div class="info-row">
@@ -114,19 +143,65 @@
                 <span class="info-label">Status</span>
                 <span class="status-aktif">Aktif</span>
             </div>
-          <div class="divider"></div>
 
-        <div class="card-footer">
+            <div class="divider"></div>
+
             <div class="footer-actions">
+                <button class="edit-btn" onclick="openModal()">
+                    ✏️ Edit Profile
+                </button>
                 <form method="POST" action="/delete_account" onsubmit="return confirm('Yakin mau hapus akun? Tindakan ini tidak bisa dibatalkan!')">
-                    <button type="submit" class="delete-btn">
-                        🗑️ Hapus Akun
-                    </button>
+                    <button type="submit" class="delete-btn">🗑️ Hapus Akun</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- MODAL EDIT PROFILE -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <div class="modal-title">
+            ✏️ Edit Profile
+        </div>
+        <form method="POST" action="/edit_profile">
+            <div class="form-group">
+                <label>Nama / Username</label>
+                <input type="text" name="nama" value="{{ session['username'] }}" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ session['email'] }}" required>
+            </div>
+            <div class="form-group">
+                <label>NIP</label>
+                <input type="text" name="nip" value="{{ session['nip'] }}">
+            </div>
+            <div class="form-group">
+                <label>Password Baru</label>
+                <input type="password" name="password_baru" placeholder="Kosongkan jika tidak diganti">
+                <small>Isi hanya jika ingin mengganti password</small>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
+                <button type="submit" class="btn-save">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal() {
+        document.getElementById('editModal').classList.add('show');
+    }
+    function closeModal() {
+        document.getElementById('editModal').classList.remove('show');
+    }
+    // Tutup modal kalau klik di luar
+    document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+</script>
 
 </body>
 </html>
