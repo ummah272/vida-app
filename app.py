@@ -875,17 +875,6 @@ def delete_account():
     
     return redirect(url_for('login'))
 
-# Route untuk logout
-@app.route('/logout')
-def logout():
-    session.clear()  # Menghapus session login
-    return redirect(url_for('login'))  # Mengarahkan kembali ke halaman login
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-# Taruh route ini di app.py, di antara profile_gate dan delete_account
-
 @app.route('/edit_profile', methods=['POST'])
 def edit_profile():
     if 'user_id' not in session:
@@ -895,7 +884,7 @@ def edit_profile():
         user = Pengguna.query.get(session['user_id'])
         if not user:
             flash('❌ User tidak ditemukan.', 'error')
-            return redirect(url_for('profile_gate'))
+            return redirect(url_for('login'))
 
         user.nama  = request.form.get('nama', user.nama).strip()
         user.email = request.form.get('email', user.email).strip()
@@ -903,11 +892,10 @@ def edit_profile():
 
         password_baru = request.form.get('password_baru', '').strip()
         if password_baru:
-            user.password = password_baru  # ganti sesuai hashing yang kamu pakai
+            user.password = password_baru
 
         db.session.commit()
 
-        # Update session supaya tampilan langsung berubah
         session['username'] = user.nama
         session['email']    = user.email
         session['nip']      = user.nip
@@ -918,7 +906,19 @@ def edit_profile():
         db.session.rollback()
         flash(f'❌ Gagal memperbarui profile: {str(e)}', 'error')
 
+    if session.get('role') == 'Bea Cukai':
+        return redirect(url_for('profile_beacukai'))
     return redirect(url_for('profile_gate'))
+
+# Route untuk logout
+@app.route('/logout')
+def logout():
+    session.clear()  # Menghapus session login
+    return redirect(url_for('login'))  # Mengarahkan kembali ke halaman login
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 
 #@app.route('/dashboard_emkl')
