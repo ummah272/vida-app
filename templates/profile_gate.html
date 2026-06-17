@@ -2,30 +2,37 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Profile Gate Superintendent</title>
+    <title>Profile Bea Cukai</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; background: #f0f4f8; display: flex; margin: 0; }
+        body { font-family: 'Plus Jakarta Sans', Arial, sans-serif; background-color: #f0f4f8; display: flex; }
 
+        /* SIDEBAR - sama persis */
         .sidebar {
-        width: 275px;          /* ← samain sama beacukai */
-        background-color: #003366;
-        color: white;
-        padding: 20px;
-        height: 100vh;
-        overflow-y: auto;
-        position: fixed;
-        left: 0; top: 0;
-    }
-        .sidebar h2 { text-align: center; margin-top: 20px; color: white; }
-        .sidebar img { width: 60%; height: auto; margin: 0 auto 16px auto; display: block;}
-        .sidebar a { display: block; color: white; text-decoration: none; padding: 10px; margin: 10px 0; background-color: #0056b3; border-radius: 5px; text-align: center; font-weight: 600; font-size: 13px; transition: background 0.2s; }
-        .sidebar a:hover { background-color: #002147; }
-        .sidebar a.active { background-color: #28a745; }
+            width: 280px;
+            background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+            padding: 30px 20px;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            left: 0; top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 4px 0 16px rgba(0,0,0,0.1);
+        }
+        .sidebar img { width: 80px; height: auto; }
+        .sidebar h2 { color: white; font-size: 18px; text-align: center; font-weight: 700; line-height: 1.3; }
+        .sidebar a { width: 100%; color: white; text-decoration: none; padding: 14px 16px; border-radius: 8px; text-align: center; font-weight: 600; font-size: 14px; background: rgba(255,255,255,0.1); transition: all 0.3s ease; }
+        .sidebar a:hover { background: rgba(255,255,255,0.25); }
+        .sidebar a.active { background: #28a745; }
 
-        .main-content { margin-left: 250px; padding: 40px 20px; width: calc(100% - 250px); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+        /* MAIN */
+        .main-content { margin-left: 280px; padding: 30px 20px; width: calc(100% - 280px); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
         .profile-card { background: #fff; border-radius: 16px; width: 100%; max-width: 560px; border: 1px solid #e2e8f0; overflow: hidden; }
         .topbar { padding: 1rem 1.5rem 0; }
         .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; text-decoration: none; }
@@ -42,13 +49,11 @@
         .info-label { font-size: 13px; color: #94a3b8; width: 95px; flex-shrink: 0; }
         .info-value { font-size: 14px; color: #1e293b; font-weight: 500; }
         .status-aktif { font-size: 14px; font-weight: 600; color: #16a34a; }
-        .divider { height: 1px; background: #f1f5f9; margin: 0; }
-        .card-footer { padding: 1.25rem 1.5rem; }
-        .logout-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: transparent; color: #dc2626; font-size: 14px; cursor: pointer; text-decoration: none; font-weight: 500; font-family: inherit; }
-        .logout-btn:hover { background: #fef2f2; }
+        .divider { height: 1px; background: #f1f5f9; margin: 1.25rem 0; }
         .delete-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: #dc2626; color: #fff; font-size: 14px; cursor: pointer; font-weight: 500; font-family: inherit; }
         .delete-btn:hover { background: #b91c1c; }
-        .footer-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .logout-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 8px; border: 1px solid #fecaca; background: transparent; color: #dc2626; font-size: 14px; cursor: pointer; text-decoration: none; font-weight: 500; }
+        .logout-btn:hover { background: #fef2f2; }
     </style>
 </head>
 <body>
@@ -56,7 +61,7 @@
 <div class="sidebar">
     <img src="{{ url_for('static', filename='logo/logo_sistem_2.png') }}" alt="Logo Sistem">
     <h2>Login Request System</h2>
-    <a href="/dashboard_gate">📊 Dashboard</a>
+     <a href="/dashboard_gate">📊 Dashboard</a>
     <a href="/monitoring_gate">📋 Monitoring</a>
     <a href="/profile_gate" class="active">👤 Profile</a>
     <a href="/logout">🚪 Logout</a>
@@ -64,7 +69,6 @@
 
 <div class="main-content">
     <div class="profile-card">
-
         <div class="topbar">
             <a href="{{ url_for('dashboard_gate') }}" class="back-btn">
                 <i class="ti ti-arrow-left"></i> Kembali
@@ -76,8 +80,8 @@
             <div>
                 <p class="username">{{ session['username'] }}</p>
                 <span class="badge">
-                    <i class="ti ti-barrier-block" style="font-size:12px"></i>
-                    Gate Superintendent
+                    <i class="ti ti-shield-check" style="font-size:12px"></i>
+                    Bea Cukai
                 </span>
             </div>
         </div>
@@ -95,9 +99,9 @@
                 <span class="info-label">Email</span>
                 <span class="info-value">{{ session['email'] }}</span>
             </div>
-            <div class="info-row">
-                <i class="ti ti-id-badge-2 info-icon"></i>
-                <span class="info-label">NIP</span>
+                <div class="info-row">
+                <i class="ti ti-mail info-icon"></i>
+                <span class="info-label">Nip</span>
                 <span class="info-value">{{ session['nip'] }}</span>
             </div>
             <div class="info-row">
@@ -110,9 +114,7 @@
                 <span class="info-label">Status</span>
                 <span class="status-aktif">Aktif</span>
             </div>
-        </div>
-
-        <div class="divider"></div>
+          <div class="divider"></div>
 
         <div class="card-footer">
             <div class="footer-actions">
@@ -123,7 +125,6 @@
                 </form>
             </div>
         </div>
-
     </div>
 </div>
 
